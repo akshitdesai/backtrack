@@ -162,7 +162,7 @@ function LoginPage() {
             <Typography
               variant="h4"
               component="h2"
-              style={{ color: "#3f51b5", fontWeight: "bold" }}
+              style={{ color: "#b2b2b2", fontWeight: "bold" }}
             >
               Sign in
             </Typography>
@@ -207,7 +207,12 @@ function LoginPage() {
                 fullWidth
               />
             </Grid>
-            <Button type="submit" variant="contained" color="primary" fullWidth>
+            <Button
+              type="submit"
+              variant="contained"
+              style={{ fontWeight: "700", bgcolor: "#b2b2b2" }}
+              fullWidth
+            >
               Login
             </Button>
 

@@ -8,6 +8,7 @@ import LoginPage from "./views/Login";
 import SignUpPage from "./views/Signup";
 import Footer from "./views/Footer";
 import MessagePopupBox from "./helper/MessagePopupBox";
+import HomePage from "./views/Home";
 
 // function App() {
 //   return (
@@ -49,6 +50,7 @@ function App() {
               <Route path="/" element={<LoginPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignUpPage />} />
+              <Route path="/home" element={<HomePage />} />
             </Routes>
           </Grid>
           {/* <Grid item>
