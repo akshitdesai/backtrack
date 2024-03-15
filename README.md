@@ -23,7 +23,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 
 # To run the server
-python main.py
+flask run -p 8000 --debugger 
 ```
 
 
