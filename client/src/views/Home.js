@@ -81,11 +81,74 @@ const useStyles = makeStyles(() => ({
     fontStyle: "normal",
     fontWeight: 900,
     lineHeight: "150%",
+    // textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)",
   },
   shadeGrid: {
     width: "451px",
     height: "451px",
     flexShrink: 0,
+  },
+  monitoringGrid: {
+    width: "1301px",
+    height: "695px",
+    flexShrink: 0,
+    borderRadius: "16px",
+    background: "#F4F4F4",
+    marginTop: "5%",
+    marginBottom: "5%",
+  },
+  monitoringGridTitle: {
+    // height: "115.501px",
+    flexShrink: 0,
+    color: "#191825",
+    fontFamily: "Inter",
+    fontSize: "48px",
+    fontStyle: "normal",
+    fontWeight: 600,
+    lineHeight: "120%",
+  },
+  monitoringGridSubtitle: {
+    color: "rgba(25, 24, 37, 0.60)",
+    fontFamily: "Inter",
+    fontSize: "24px",
+    fontStyle: "normal",
+    fontWeight: 600,
+    lineHeight: "150%",
+    marginTop: "3%",
+    // width: "420px",
+  },
+  startButtonStyle: {
+    borderRadius: "4px",
+    border: "1px solid var(--Black, #000);",
+    background: "#191825",
+    "&:hover": {
+      background: "#1e1c3a", // Change this to your desired hover background color
+    },
+    padding: "12px 24px",
+  },
+  feedbackGrid: {
+    width: "1301px",
+    height: "605px",
+    flexShrink: 0,
+    borderRadius: "24px",
+    // background: "#352DFF",
+    marginTop: "5%",
+    marginBottom: "5%",
+  },
+  tryButtonStyle: {
+    borderRadius: "4px",
+    border: "1px solid #FFF",
+    background: "#FFF",
+    "&:hover": {
+      background: "#d9d3d6", // Change this to your desired hover background color
+    },
+    padding: "12px 24px",
+  },
+  smallGrid: {
+    background: "#F4F4F4",
+    height: "49%",
+    borderRadius: "24px",
+    padding: "20px",
   },
 }));
 function HomePage(props) {
@@ -178,6 +241,87 @@ function HomePage(props) {
         </Grid> */}
         <Grid item className={styles.endTextGrid}>
           <Typography className={styles.endText}>BackTrack</Typography>
+        </Grid>
+        <Grid container className={styles.monitoringGrid}>
+          <Grid item xs={6} style={{ marginLeft: "3%", marginTop: "3%" }}>
+            <Grid item className={styles.monitoringGridTitle}>
+              Real-Time Posture Monitoring
+            </Grid>
+            <Grid item className={styles.monitoringGridSubtitle}>
+              Using your{" "}
+              <span style={{ color: "#191825" }}>device's webcam</span>,
+              BackTrack carefully observes your posture as you work or study,
+              ensuring <span style={{ color: "#191825" }}>privacy</span> and{" "}
+              <span style={{ color: "#191825" }}>security</span> at every step.
+            </Grid>
+            <Grid style={{ marginTop: "10%" }}>
+              <Button className={styles.startButtonStyle}>
+                <Typography className={styles.buttonTitle}>
+                  Get Started
+                </Typography>
+              </Button>
+            </Grid>
+          </Grid>
+          <Grid></Grid>
+        </Grid>
+        <Grid container className={styles.feedbackGrid}>
+          <Grid
+            item
+            xs={9}
+            style={{ background: "#352DFF", borderRadius: "24px" }}
+          >
+            <Grid container>
+              <Grid item xs={6} style={{ marginLeft: "3%", marginTop: "3%" }}>
+                <Grid
+                  item
+                  className={styles.monitoringGridTitle}
+                  style={{ color: "#F1F1F1" }}
+                >
+                  Personalized Feedback
+                </Grid>
+                <Grid
+                  item
+                  className={styles.monitoringGridSubtitle}
+                  style={{ color: "#F1F1F1" }}
+                >
+                  Instantly receive suggestions tailored to improve your
+                  posture, reducing the risk of back pain and enhancing your
+                  focus.
+                </Grid>
+                <Grid style={{ marginTop: "10%" }}>
+                  <Button className={styles.tryButtonStyle}>
+                    <Typography
+                      className={styles.buttonTitle}
+                      style={{ color: "#000" }}
+                    >
+                      Try Now
+                    </Typography>
+                  </Button>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={3} style={{ paddingLeft: "5%" }}>
+            <Grid container direction="column" style={{ height: "100%" }}>
+              <Grid item className={styles.smallGrid}>
+                <Grid className={styles.monitoringGridTitle}>
+                  Local Support
+                </Grid>
+                <Grid item className={styles.monitoringGridSubtitle}>
+                  Discover health experts in your area, handpicked for you.
+                </Grid>
+              </Grid>
+              <Grid style={{ height: "2%" }}></Grid>
+              <Grid item className={styles.smallGrid}>
+                <Grid className={styles.monitoringGridTitle}>
+                  Progress Tracking
+                </Grid>
+                <Grid item className={styles.monitoringGridSubtitle}>
+                  Get detailed Report, celebrate every improvement.
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
     </>
