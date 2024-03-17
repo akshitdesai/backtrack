@@ -38,7 +38,7 @@ pink = (255, 0, 255)
 
 # Initialize mediapipe pose class.
 mp_pose = mp.solutions.pose
-pose = mp_pose.Pose()
+pose = mp_pose.Pose
 
 
 
