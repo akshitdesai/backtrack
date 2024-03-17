@@ -23,6 +23,9 @@ import FileInput from "../helper/FileInput";
 
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
+import apiList from "../helper/Apis";
+import axios from "axios";
+import getToken from "../helper/Auth";
 const useStyles = makeStyles((theme) => ({
   body: {
     padding: "30px 30px",
@@ -44,19 +47,15 @@ const useStyles = makeStyles((theme) => ({
 function SignupPage(props) {
   const styles = useStyles();
   const setPopup = useContext(PopupContext);
-  const isLoggedIn = false;
+  const [isLoggedIn, setLoggedIn] = useState(false);
 
   const [signupDetails, setSignupDetails] = useState({
-    type: "applicant",
     email: "",
     password: "",
     name: "",
-    education: [],
-    skills: [],
-    resume: "",
-    profile: "",
-    bio: "",
-    contactNumber: "",
+    username:""
+
+
   });
 
   const [phone, setPhone] = useState("");
@@ -81,6 +80,12 @@ function SignupPage(props) {
       error: false,
       message: "",
     },
+    username:{
+      untouched: true,
+      required: true,
+      error: false,
+      message: "",
+    }
   });
 
   const handleInput = (key, value) => {
@@ -147,40 +152,39 @@ function SignupPage(props) {
       (obj) => tmpErrorHandler[obj].error
     );
 
-    // if (isComplete) {
-    //   axios
-    //     .post(apiList.signup, updatedDetails)
-    //     .then((response) => {
-    //       localStorage.setItem("token", response.data.token);
-    //       localStorage.setItem("type", response.data.type);
-    //       setLoggedin(getToken());
-    //       // navigate("/login");
+    if (isComplete) {
+      axios
+        .post(apiList.signup, signupDetails)
+        .then((response) => {
+          localStorage.setItem("token", response.data.access_token);
+          console.log("Token", getToken)
+          navigate("/login");
 
-    //       setPopup({
-    //         open: true,
-    //         severity: "success",
-    //         message: "Logged in successfully",
-    //       });
-    //       console.log(response);
-    //     })
-    //     .catch((err) => {
-    //       // navigate("/login");
-    //       setPopup({
-    //         open: true,
-    //         severity: "error",
-    //         message: err.response.data.message,
-    //       });
-    //       console.log(err.response);
-    //     });
-    // } else {
-    //   // navigate("/login");
-    //   setinputError(tmpErrorHandler);
-    //   setPopup({
-    //     open: true,
-    //     severity: "error",
-    //     message: "Incorrect Input",
-    //   });
-    // }
+          setPopup({
+            open: true,
+            severity: "success",
+            message: "Logged in successfully",
+          });
+          console.log(response);
+        })
+        .catch((err) => {
+          // navigate("/login");
+          setPopup({
+            open: true,
+            severity: "error",
+            message: err.response.data.message,
+          });
+          console.log(err.response);
+        });
+    } else {
+      // navigate("/login");
+      setinputError(tmpErrorHandler);
+      setPopup({
+        open: true,
+        severity: "error",
+        message: "Incorrect Input",
+      });
+    }
   };
 
   return isLoggedIn ? (
@@ -228,6 +232,25 @@ function SignupPage(props) {
                 handleInputError("name", true, "Name is required");
               } else {
                 handleInputError("name", false, "");
+              }
+            }}
+            variant="outlined"
+            margin="normal"
+          />
+        </Grid>
+        <Grid item>
+          <TextField
+            label="Username"
+            value={signupDetails.username}
+            onChange={(event) => handleInput("username", event.target.value)}
+            className={styles.inputBox}
+            error={inputError.username.error}
+            helperText={inputError.username.message}
+            onBlur={(event) => {
+              if (event.target.value === "") {
+                handleInputError("username", true, "Username is required");
+              } else {
+                handleInputError("username", false, "");
               }
             }}
             variant="outlined"
