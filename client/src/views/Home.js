@@ -23,6 +23,9 @@ import globalStyles from "../helper/GlobalStyles";
 import { Rating } from "@material-ui/lab";
 import next from "../assets/icons/next.png";
 import previous from "../assets/icons/previous.png";
+import dots from "../assets/icons/dots.png";
+import plus from "../assets/icons/plus.png";
+import Footer from "./Footer";
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -173,6 +176,15 @@ const useStyles = makeStyles(() => ({
     fontWeight: 400,
     lineHeight: "150%",
   },
+  outerQuestion: {
+    display: "flex",
+    padding: "12px 24px",
+    alignItems: "center",
+    alignSelf: "stretch",
+    borderRadius: "4px",
+    border: "1px solid #191825",
+    marginBottom: "2%",
+  },
 }));
 
 const reviews = [
@@ -194,6 +206,12 @@ const reviews = [
     feedback:
       "BackTrack's detailed reports and personalized tips have helped me improve my sitting habits drastically. I've noticed less strain and more energy for my studies. It's an essential tool for any student.",
   },
+];
+const faqs = [
+  "How does BackTrack work?",
+  "Is my privacy protected?",
+  "Can I use BackTrack on any device?",
+  "Is there a cost to use BackTrack?",
 ];
 function ReviewTile(props) {
   const styles = useStyles();
@@ -459,7 +477,10 @@ function HomePage(props) {
             </Grid>
             <Grid item>
               <Grid container>
-                <Grid item>...</Grid>
+                <Grid item>
+                  {" "}
+                  <img src={dots} alt="Dots" />
+                </Grid>
                 <Grid item xs container justifyContent="flex-end">
                   <img
                     src={previous}
@@ -475,6 +496,51 @@ function HomePage(props) {
               </Grid>
             </Grid>
           </Grid>
+        </Grid>
+
+        <Grid
+          container
+          direction="column"
+          style={{ paddingLeft: "6%", marginTop: "3%", paddingRight: "5%" }}
+        >
+          <Grid item container style={{ padding: "20px" }} spacing={3}>
+            <Grid item xs={5}>
+              <Typography className={styles.monitoringGridTitle}>
+                FAQs
+              </Typography>
+              <Typography
+                className={styles.monitoringGridSubtitle}
+                style={{ fontSize: "18px" }}
+              >
+                Got more questions? We’re here to help! Feel free to reach out
+                or explore our detailed FAQ section to learn more about how
+                BackTrack can make a difference in your daily life.
+              </Typography>
+            </Grid>
+            <Grid item xs={7} style={{ paddingLeft: "3%" }}>
+              {faqs.map((question) => (
+                <Grid container className={styles.outerQuestion}>
+                  <Grid item className={styles.commonSubTitle}>
+                    <b>{question}</b>
+                  </Grid>
+                  <Grid item container xs justifyContent="flex-end">
+                    <img
+                      src={plus}
+                      alt="Plus Icon"
+                      style={{ cursor: "pointer" }}
+                    />
+                  </Grid>
+                </Grid>
+              ))}
+            </Grid>
+          </Grid>
+        </Grid>
+
+        <Grid
+          container
+          style={{ paddingLeft: "6%", marginTop: "4%", paddingRight: "5%" }}
+        >
+          <Footer />
         </Grid>
       </Grid>
     </>
