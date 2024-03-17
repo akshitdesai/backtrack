@@ -260,7 +260,7 @@ function SignupPage(props) {
             onBlur={handlePasswordError}
           />
         </Grid>
-        <Grid item>
+        {/* <Grid item>
           <FileInput
             className={styles.inputBox + " " + styles.customMargin}
             label="Profile Picture"
@@ -269,7 +269,7 @@ function SignupPage(props) {
             handleInput={handleInput}
             identifier="profile"
           />
-        </Grid>
+        </Grid> */}
 
         <Grid item>
           {/* <PhoneInput
@@ -278,14 +278,14 @@ function SignupPage(props) {
             onChange={(phone) => setPhone(phone)}
             className={styles.inputBox}
           /> */}
-          <PhoneInput
+          {/* <PhoneInput
             country="ca"
             placeholder="Enter phone number"
             value={phone}
             onChange={(phone) => setPhone(phone)}
             className={styles.inputBox + " " + styles.customMargin}
             style={{ marginTop: "16px", marginBottom: "8px" }}
-          />
+          /> */}
         </Grid>
         <Grid item>
           <FormControlLabel
