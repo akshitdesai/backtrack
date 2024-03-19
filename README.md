@@ -17,6 +17,7 @@ pyenv install 3.9.18
 
 # install dependencies
 cd server
+pyenv install 3.9.18
 pyenv local 3.9.18
 pyenv exec python -m venv .venv
 source .venv/bin/activate

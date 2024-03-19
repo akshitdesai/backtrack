@@ -15,6 +15,8 @@ import { Navigate } from "react-router-dom";
 import { PopupContext } from "../App";
 import HomeImage from "../assets/images/home.jpg";
 import PasswordInput from "./PasswordInput";
+import getToken from "../helper/Auth";
+import apiList from "../helper/Apis";
 
 const useStyles = makeStyles((theme) => ({
   body: {
@@ -50,8 +52,7 @@ function LoginPage() {
     setPassword(event.target.value);
   };
 
-  //   const [isLoggedIn, setIsLoggedIn] = useState(getToken());
-  const isLoggedIn = false;
+    const [isLoggedIn, setIsLoggedIn] = useState(getToken);
   const [inputError, setInputError] = useState({
     username: {
       error: false,
@@ -108,35 +109,34 @@ function LoginPage() {
       email: username,
       password,
     };
-    // if (isComplete) {
-    //   axios
-    //     .post(apiList.login, loginDetails)
-    //     .then((response) => {
-    //       localStorage.setItem("token", response.data.token);
-    //       localStorage.setItem("type", response.data.type);
-    //       setIsLoggedIn(getToken());
-    //       setPopup({
-    //         open: true,
-    //         severity: "success",
-    //         message: "Logged in successfully",
-    //       });
-    //       console.log(response);
-    //     })
-    //     .catch((err) => {
-    //       setPopup({
-    //         open: true,
-    //         severity: "error",
-    //         message: err?.response?.data?.message,
-    //       });
-    //       console.log(err.response);
-    //     });
-    // } else {
-    //   setPopup({
-    //     open: true,
-    //     severity: "error",
-    //     message: "Incorrect Input",
-    //   });
-    // }
+    if (isComplete) {
+      axios
+        .post(apiList.login, loginDetails)
+        .then((response) => {
+          localStorage.setItem("token", response.data.access_token);
+          setIsLoggedIn(getToken);
+          setPopup({
+            open: true,
+            severity: "success",
+            message: "Logged in successfully",
+          });
+          console.log(response);
+        })
+        .catch((err) => {
+          setPopup({
+            open: true,
+            severity: "error",
+            message: "Invalid Details",
+          });
+          console.log(err.response);
+        });
+    } else {
+      setPopup({
+        open: true,
+        severity: "error",
+        message: "Incorrect Input",
+      });
+    }
   };
 
   return isLoggedIn ? (
