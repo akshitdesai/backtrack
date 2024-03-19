@@ -29,6 +29,24 @@
   font-weight: 600;
   line-height: 120%;
 }
+.heading2{
+  color: #191825 !important;
+
+font-family: Inter !important;
+font-size: 40px;
+font-style: normal !important;
+font-weight: 500 !important;
+line-height: 120% !important;
+}
+.heading3{
+  color: #000;
+
+font-family: Inter;
+font-size: 24px;
+font-style: normal;
+font-weight: 500;
+line-height: normal;
+}
 .heading4 {
   color: #000;
 
@@ -43,3 +61,5 @@
 .gray {
   color: rgba(0, 0, 0, 0.5);
 }
+
+

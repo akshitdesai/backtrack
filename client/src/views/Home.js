@@ -26,6 +26,10 @@ import previous from "../assets/icons/previous.png";
 import dots from "../assets/icons/dots.png";
 import plus from "../assets/icons/plus.png";
 import Footer from "./Footer";
+import apiList from "../helper/Apis";
+import { v4 as uuidv4 } from 'uuid';
+import SignupImage from "../assets/images/signup.svg";
+
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -242,8 +246,21 @@ function ReviewTile(props) {
     </Grid>
   );
 }
+
+function Stream(props) {
+  const uniqueId = uuidv4();
+  const streamSource = `${apiList.stream}/${uniqueId}`;
+  return (
+    <div className="App">
+      <header className="App-header">
+        <img src={streamSource} className="App-logo" alt="logo" />
+      </header>
+    </div>
+  );
+}
 function HomePage(props) {
   const setPopup = useContext(PopupContext);
+  const [streamStarted, setStreamStarted] = useState(false);
   const styles = useStyles();
   useEffect(() => {
     getData();
@@ -275,6 +292,10 @@ function HomePage(props) {
     //     });
     //   });
   };
+
+  const getStarted = ()=>{
+   setStreamStarted(true);
+  }
 
   return (
     <>
@@ -346,11 +367,14 @@ function HomePage(props) {
               <span style={{ color: "#191825" }}>security</span> at every step.
             </Grid>
             <Grid style={{ marginTop: "10%" }}>
-              <Button className={styles.startButtonStyle}>
+              <Button className={styles.startButtonStyle} onClick={()=>getStarted()}>
                 <Typography className={styles.buttonTitle}>
                   Get Started
                 </Typography>
               </Button>
+              {streamStarted && (
+        <Stream  />
+      )}
             </Grid>
           </Grid>
         </Grid>
@@ -448,6 +472,11 @@ function HomePage(props) {
               </Button>
             </div>
           </Grid>
+          <Grid item xs={6}>
+        <div>
+          <img src={SignupImage} width={600} height={600} />
+        </div>
+      </Grid>
         </Grid>
 
         <Grid
