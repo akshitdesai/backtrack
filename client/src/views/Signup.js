@@ -19,6 +19,7 @@ import { PopupContext } from "../App";
 import PasswordInput from "./PasswordInput";
 
 import HomeImage from "../assets/images/home.jpg";
+import SignupImage from "../assets/images/signup.svg";
 import FileInput from "../helper/FileInput";
 
 import "react-phone-number-input/style.css";
@@ -53,9 +54,7 @@ function SignupPage(props) {
     email: "",
     password: "",
     name: "",
-    username:""
-
-
+    username: "",
   });
 
   const [phone, setPhone] = useState("");
@@ -80,12 +79,12 @@ function SignupPage(props) {
       error: false,
       message: "",
     },
-    username:{
+    username: {
       untouched: true,
       required: true,
       error: false,
       message: "",
-    }
+    },
   });
 
   const handleInput = (key, value) => {
@@ -157,7 +156,7 @@ function SignupPage(props) {
         .post(apiList.signup, signupDetails)
         .then((response) => {
           localStorage.setItem("token", response.data.access_token);
-          console.log("Token", getToken)
+          console.log("Token", getToken);
           navigate("/login");
 
           setPopup({
@@ -191,33 +190,18 @@ function SignupPage(props) {
     <Navigate to="/" />
   ) : (
     // <Paper elevation={3} className={styles.body}>
-    <Grid container spacing={4}>
-      <Grid item sm={12} md={6}>
+    <Grid container spacing={3}>
+      <Grid item xs={5} sm={12} md={6}>
         <div className={styles.body}>
-          <img
-            src={HomeImage}
-            width={500}
-            height={500}
-            style={{ borderRadius: "50%" }}
-          />
+          <img src={SignupImage} width={600} height={600} />
         </div>
       </Grid>
-      <Grid
-        item
-        sm={12}
-        md={6}
-        spacing={4}
-        className={styles.body}
-        style={{ height: "100%" }}
-      >
-        <div className={styles.body}>
-          <Typography
-            variant="h3"
-            component="h2"
-            style={{ color: "#3f51b5", fontWeight: "bold" }}
-          >
-            Sign up
-          </Typography>
+      <Grid item xs={7} sm={12} md={6} spacing={4} className={styles.body}>
+        <div className={`${styles.body} Title`}>
+          {/* <Typography className="Title"> */}
+          <span style={{ color: "#352DFF" }}>Sign Up </span> & Improve Your
+          Posture
+          {/* </Typography> */}
         </div>
         <Grid item>
           <TextField
@@ -310,13 +294,13 @@ function SignupPage(props) {
             style={{ marginTop: "16px", marginBottom: "8px" }}
           /> */}
         </Grid>
-        <Grid item>
+        {/* <Grid item>
           <FormControlLabel
             control={<Checkbox value="allowExtraEmails" color="primary" />}
             label="I want to receive inspiration, new posts and updates via email."
             className={styles.inputBox + " " + styles.customMargin}
           />
-        </Grid>
+        </Grid> */}
 
         <Button
           variant="contained"
@@ -325,14 +309,20 @@ function SignupPage(props) {
           onClick={() => handleSingup()}
           //   className={styles.submitButton}
           className={styles.inputBox + " " + styles.customMargin}
+          style={{ background: "#352DFF" }}
         >
           Signup
         </Button>
 
         <Grid container>
-          <Grid item style={{ marginLeft: "49%", marginTop: "1%" }}>
-            <Link href="/login" variant="body2">
-              Already have an account? Sign in
+          <Grid
+            item
+            style={{ marginLeft: "52%", marginTop: "1%" }}
+            className="heading4"
+          >
+            <span>Already have an account? </span>
+            <Link href="/login" style={{ color: "#4942FF" }}>
+              Log In
             </Link>
           </Grid>
         </Grid>

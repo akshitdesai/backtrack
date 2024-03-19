@@ -20,3 +20,26 @@
 .App-link {
   color: #09d3ac;
 }
+
+.Title {
+  color: #191825;
+  font-family: Inter;
+  font-size: 48px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 120%;
+}
+.heading4 {
+  color: #000;
+
+  text-align: center;
+  font-family: Inter;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 120%;
+}
+
+.gray {
+  color: rgba(0, 0, 0, 0.5);
+}
