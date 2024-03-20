@@ -22,6 +22,14 @@ import mediapipe as mp
 mp_pose = mp.solutions.pose
 mp_holistic = mp.solutions.holistic
 
+# Firebase Notification related info
+import firebase_admin
+from firebase_admin import credentials, messaging
+
+# Initialize Firebase Admin SDK
+cred = credentials.Certificate("app/api/stream/firebase-admin-token.json")  # Path to the JSON file obtained in step 3
+firebase_admin.initialize_app(cred)
+
 
 def findDistance(x1, y1, x2, y2):
     dist = m.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
@@ -55,18 +63,22 @@ pose = mp_pose.Pose()
 # exchanges of the frames (useful for multiple browsers/tabs
 # are viewing the stream)
 lock = threading.Lock()
-good_frames = 0
-bad_frames = 0
+good_frames_g = 0
+bad_frames_g = 0
 cap = None
+token = ""
+
 
 def generate():
     # Initialize frame counters.
-    global good_frames
-    global bad_frames
+    global good_frames_g
+    global bad_frames_g
     global cap
 
     good_frames = 0
     bad_frames = 0
+    good_frames_g = 0
+    bad_frames_g = 0
 
     # grab global references to the lock variable
     global lock
@@ -143,7 +155,7 @@ def generate():
             cv2.circle(image, (l_shldr_x, l_shldr_y), 7, yellow, -1)
             cv2.circle(image, (l_ear_x, l_ear_y), 7, yellow, -1)
 
-            # Let's take y - coordinate of P3 100px above x1,  for display elegance.
+            # Let's take y - coordinate of P3 100px above x1, for display elegance.
             # Although we are taking y = 0 while calculating angle between P1,P2,P3.
             cv2.circle(image, (l_shldr_x, l_shldr_y - 100), 7, yellow, -1)
             cv2.circle(image, (r_shldr_x, r_shldr_y), 7, pink, -1)
@@ -162,6 +174,7 @@ def generate():
             if neck_inclination < 40 and torso_inclination < 10:
                 bad_frames = 0
                 good_frames += 1
+                good_frames_g += 1
 
                 cv2.putText(image, angle_text_string, (10, 30), font, 0.9, light_green, 2)
                 cv2.putText(image, str(int(neck_inclination)), (l_shldr_x + 10, l_shldr_y), font, 0.9, light_green, 2)
@@ -176,6 +189,7 @@ def generate():
             else:
                 good_frames = 0
                 bad_frames += 1
+                bad_frames_g += 1
 
                 cv2.putText(image, angle_text_string, (10, 30), font, 0.9, red, 2)
                 cv2.putText(image, str(int(neck_inclination)), (l_shldr_x + 10, l_shldr_y), font, 0.9, red, 2)
@@ -200,8 +214,8 @@ def generate():
                 cv2.putText(image, time_string_bad, (10, h - 20), font, 0.9, red, 2)
 
             # If you stay in bad posture for more than 3 minutes (180s) send an alert.
-            if bad_time > 180:
-                # show nad posture warning
+            if bad_time > 60 * 3:
+                send_notification(bad_time // 60)
                 pass
 
             # encode the frame in JPEG format
@@ -215,7 +229,6 @@ def generate():
         yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
     # release the camera
     # cv2.release()
-
 
 
 @api.route("/<string:stream_id>")
@@ -234,24 +247,30 @@ class StreamStart(Resource):
 
         return Response(generate(), mimetype="multipart/x-mixed-replace; boundary=frame")
 
+
 @api.route("/<string:stream_id>/stop")
 class StreamStop(Resource):
-
     def get(self, stream_id):
         """ Get a specific user's data by their username """
         global cap
-        cap.release()
-        cv2.destroyAllWindows()
-        global good_frames, bad_frames
 
-        good_posture = good_frames * 100 / (good_frames+bad_frames)
+        if cap is not None:
+            cap.release()
+            cv2.destroyAllWindows()
+
+        global good_frames_g, bad_frames_g
+
+        good_posture = good_frames_g * 100 / (good_frames_g + bad_frames_g)
         return StreamService.stop_stream(stream_id, good_posture)
+
+
 @api.route("/history")
 class StreamGet(Resource):
     def get(self):
         """ Get last N entries in the database for a stream """
         try:
-            # n = int(request.args.get('n', default=10))  # Get the value of 'n' query parameter, default to 10 if not provided
+            # n = int(request.args.get('n', default=10))
+            # Get the value of 'n' query parameter, default to 10 if not provided
             return StreamService.get_last_n_streams()
         except ValueError:
             return "Invalid value for parameter 'n'", 400
@@ -262,10 +281,38 @@ class StreamByDate(Resource):
     def get(self, date):
         """ Get all streams for a given date """
         try:
-
             # Parse the date string into a datetime object
             date = datetime.strptime(date, '%Y-%m-%d').date()  # Assuming date format is YYYY-MM-DD
 
             return StreamService.get_streams_by_date(date), 200
         except ValueError:
             return "Invalid date format. Please provide the date in YYYY-MM-DD format.", 400
+
+
+@api.route("/registerToken/<string:rt>")
+class RegisterToken(Resource):
+    def get(self, rt):
+        global token
+        token = rt
+
+        return {"status": "success"}
+
+
+def send_notification(time_duration_in_min):
+    global token
+
+    if len(token) == 0:
+        return
+
+    # Create a message
+    message = messaging.Message(
+        notification=messaging.Notification(
+            title="Correct your posture",
+            body=f"You're sitting bad posture for last {time_duration_in_min} minutes.",
+        ),
+        token=token,
+    )
+
+    # Send a message to the device corresponding to the provided registration token
+    response = messaging.send(message)
+    print("Successfully sent message:", response)
