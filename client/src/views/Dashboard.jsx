@@ -197,7 +197,7 @@ export default function Dashboard() {
 const series = [
     {
         name: "App Usage(in mins)",
-        data: categories.map(date => response.data[date].duration_total)
+        data: categories.map(date => parseInt (response.data[date].duration_total/60))
     },
     {
         name: "Good Posture Progress(%)",
@@ -206,7 +206,7 @@ const series = [
 ];
 const postureValues = series[1].data;
 const totalPosture = postureValues.reduce((acc, val) => acc + val, 0);
-const averagePosture = totalPosture / postureValues.length;
+const averagePosture = parseInt(totalPosture / postureValues.length);
 
 console.log("Average posture", averagePosture);
 
@@ -372,18 +372,26 @@ function BasicTable(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {sessionData.map((session) => (
+          {sessionData.length>0 ? sessionData.map((session) => (
             <TableRow key={session.name}
             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
               <TableCell align="center">{moment(session.start_time).format('DD MMM YYYY')}</TableCell>
               <TableCell align="center">
                 {session.duration > 60
-                  ? `${moment.duration(session.duration, 'seconds').asMinutes().toFixed(2)} minutes`
+                  ? `${parseInt(moment.duration(session.duration, 'seconds').asMinutes().toFixed(2))} minutes`
                   : `${session.duration} seconds`}
               </TableCell>
               <TableCell align="center">{parseInt(session.good_posture)}%</TableCell>
             </TableRow>
-          ))}
+          )):(
+            <TableRow>
+              <TableCell colSpan={3} align="center">
+                Please select a date.
+              </TableCell>
+            </TableRow>
+          )
+            
+          }
         </TableBody>
       </Table>
     </TableContainer>

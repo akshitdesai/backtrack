@@ -49,7 +49,7 @@ function App() {
         <Grid container direction="column">
           <Grid item>
             <Routes>
-              <Route path="/" element={<LoginPage />} />
+              <Route path="/" element={<SignUpPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignUpPage />} />
               <Route path="/home" element={<HomePage />} />

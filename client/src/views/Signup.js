@@ -157,7 +157,7 @@ function SignupPage(props) {
         .then((response) => {
           localStorage.setItem("token", response.data.access_token);
           console.log("Token", getToken);
-          navigate("/login");
+          navigate("/dashboard");
 
           setPopup({
             open: true,

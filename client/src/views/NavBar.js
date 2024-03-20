@@ -124,21 +124,21 @@ function NavBar() {
           </Typography>
           <>
             <Button
-              onClick={() => handleClick("/userapplications")}
+              onClick={() => handleClick("")}
               className={styles.button}
             >
               <Typography>Features</Typography>
             </Button>
 
             <Button
-              onClick={() => handleClick("/userapplications")}
+              onClick={() => handleClick("")}
               className={styles.button}
             >
               <Typography>Get Started</Typography>
             </Button>
 
             <Button
-              onClick={() => handleClick("/userapplications")}
+              onClick={() => handleClick("")}
               className={styles.button}
             >
               <Typography>FAQ</Typography>
