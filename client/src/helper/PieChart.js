@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import ReactApexChart from "react-apexcharts";
 
-const PieChart = () => {
-  const [series, setSeries] = useState([70]);
+const PieChart = (props) => {
+  const [series, setSeries] = useState([props.averagePosture]);
   const [options, setOptions] = useState({
     chart: {
       height: 350,

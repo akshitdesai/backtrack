@@ -25,6 +25,12 @@ import { v4 as uuidv4 } from "uuid";
 import BarChart from "../helper/BarChart";
 import PieChart from "../helper/PieChart";
 import StopIcon from '@material-ui/icons/Stop';
+import axios from "axios";
+import dayjs from "dayjs";
+import moment from "moment";
+import { initializeApp } from "firebase/app";
+import { getMessaging } from "firebase/messaging/sw";
+import { getToken } from "firebase/messaging";
 
 // const useStyles = makeStyles((theme) => ({
 //   body: {
@@ -88,7 +94,7 @@ import StopIcon from '@material-ui/icons/Stop';
 function Stream(props) {
   const uniqueId = uuidv4();
   const streamSource = `${apiList.stream}/${uniqueId}`;
-
+  
   return (
     <div className="stream-monitoring" style={{ position: 'relative' }}>
       <img
@@ -113,6 +119,7 @@ function Stream(props) {
           onClick={() => {
             // Handle pause functionality here
             props.setStreamStarted(false)
+            props.onPause(uniqueId);
           }}
         >
           <StopIcon/>
@@ -123,10 +130,127 @@ function Stream(props) {
 export default function Dashboard() {
   // const styles = useStyles();
   const [streamStarted, setStreamStarted] = React.useState(false);
+  const [sessionData, setSessionData] = React.useState([]);
+  const [historySeries,setHistorySeries] = React.useState([]);
+  const [historyDates, setHistoryDates] = React.useState([]);
+  const [averagePosture, setAveragePosture] = React.useState(0);
 
+  React.useEffect(() => {
+    getSessionHistory();
+    initializeFirebase();
+
+  }, []);
+  const initializeFirebase = () => {
+    const firebaseConfig = {
+      // Your Firebase configuration
+      "apiKey": "AIzaSyCHCMf9Uy2t9F5XFIcSErdiVpgaKt9U3tI",
+      "authDomain": "backtrack-8231c.firebaseapp.com",
+      "projectId": "backtrack-8231c",
+      "storageBucket": "backtrack-8231c.appspot.com",
+      "messagingSenderId": "261927245122",
+      "appId": "1:261927245122:web:06664f285faf4b82e524db",
+      "measurementId": "G-N5Y7J4ESNL"
+    };
+
+    const app = initializeApp(firebaseConfig);
+
+    const messaging = getMessaging(app);
+
+      console.log('Requesting permission...');
+      Notification.requestPermission().then((permission) => {
+        if (permission === 'granted') {
+          console.log('Notification permission granted.');
+        }
+      })
+    
+
+
+    getToken(messaging, { vapidKey: 'BE7yOAmKFq4OxtJ-9LkHo11j7JyVfeH9ts8dNu4YZ9PphOOgzQ7aT3UUvniF0VQHzLi_CI8rOgeAoaRI8_yHQNA' }).then((currentToken) => {
+      if (currentToken) {
+        console.log("token ", currentToken)
+        axios.get(`${apiList.registerToken}/${currentToken}`)
+        .then((response) => {
+          console.log("Token - > ", response);
+        }
+        )
+        .catch((err) => {
+          console.log(err);
+        }
+        )
+      } else {
+        // Show permission request UI
+        console.log('No registration token available. Request permission to generate one.');
+        // ...
+      }
+    }).catch((err) => {
+      console.log('An error occurred while retrieving token. ', err);
+      // ...
+    });
+
+  };
+  const getSessionHistory = () => {
+    const getSessionHistory = `${apiList.history}`;
+    axios.get(getSessionHistory)
+      .then((response) => {
+        console.log("Session - > ", response.data);
+        const categories = Object.keys(response.data);
+const series = [
+    {
+        name: "App Usage(in mins)",
+        data: categories.map(date => response.data[date].duration_total)
+    },
+    {
+        name: "Good Posture Progress(%)",
+        data: categories.map(date => parseInt(response.data[date].average_good_posture))
+    }
+];
+const postureValues = series[1].data;
+const totalPosture = postureValues.reduce((acc, val) => acc + val, 0);
+const averagePosture = totalPosture / postureValues.length;
+
+console.log("Average posture", averagePosture);
+
+setHistorySeries(series);
+setHistoryDates(categories);
+setAveragePosture(averagePosture)
+       
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
   const getStarted = () => {
     setStreamStarted(true);
   };
+  const onStreamPause = (uniqueId) =>{
+    const stop = "stop"
+    const pauseStream = `${apiList.stream}/${uniqueId}/${stop}`;
+    axios.get(pauseStream)
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  
+  }
+
+  const getSessionByDate = (date) =>{
+  const formattedDate = moment(date.$d).format('YYYY-MM-DD'); 
+  console.log("Formatted date", formattedDate); 
+    const getSession = `${apiList.session}/${formattedDate}`;
+    axios.get(getSession)
+    .then((response) => {
+      console.log("Session - > ",response.data[0]);
+      const filteredData = response.data[0].filter((session)=>session.duration!=null)
+      setSessionData(filteredData.reverse());
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
+
+
 
   return (
     <div className="container">
@@ -162,15 +286,16 @@ export default function Dashboard() {
             </div> */}
             <div className="stats-section">
               <div className="stats-section-right">
-              {streamStarted ? <Stream setStreamStarted={setStreamStarted} /> :
+              {streamStarted ? <Stream setStreamStarted={setStreamStarted} onPause={onStreamPause}/> :
               <>
                 <div className="eye-image">
-                  <img src={eye} alt="eye" />
+                  <img src={eye} alt="eye"/>
                 </div>
                
                 <div className="monitoring-details">
                   <h1>Start Monitoring</h1>
-                  <p>Lorem ipsum dolor sit amet consectetur. </p>
+                  <p>Start your monitor session
+now. </p>
                   <button className="get-started"  onClick={() => getStarted()}>Get Started</button>
                   {/* {streamStarted && <Stream />} */}
                 </div>
@@ -180,29 +305,29 @@ export default function Dashboard() {
               <div className="stats-section-left">
                 <div className="analysis-details">
                   <h1>Posture Analysis Results</h1>
-                  <h2>64%</h2>
-                  <h2>Success</h2>
+                  {/* <h2 style={{color:"#352DFF"}}>{averagePosture}%</h2>
+                  <h2>Success</h2> */}
                 </div>
                 <div className="analysis-details-progress">
-                  <PieChart />
+                  {averagePosture>0 && <PieChart averagePosture = {averagePosture}/>}
                 </div>
               </div>
             </div>
           </div>
           <div className="main-content-upper-right">
-            <BasicDateCalendar />
+            <BasicDateCalendar onDateChage = {getSessionByDate} />
           </div>
         </div>
         <div className="main-content-lower">
           <div className="apex-chart">
             <h1>Progress Report</h1>
             <div>
-              <BarChart />
+              {historyDates.length>0 && <BarChart series={historySeries} categories = {historyDates}/>}
             </div>
           </div>
           <div className="session-history">
           <h1>Session History</h1>
-            <BasicTable />
+            <BasicTable sessionData = {sessionData}/>
           </div>
         </div>
       </div>
@@ -210,10 +335,15 @@ export default function Dashboard() {
   );
 }
 
-function BasicDateCalendar() {
+function BasicDateCalendar(props) {
+  const [value, setValue] = React.useState(dayjs());
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DateCalendar />
+      <DateCalendar  
+        // value={selectedDate}
+        value={value} onChange={(newValue) => {setValue(newValue); props.onDateChage(newValue);}}
+        // onClick={props.onDateChage(value)}
+        />
     </LocalizationProvider>
   );
 }
@@ -229,11 +359,12 @@ const rows = [
   { Date: " 10 Mar 2024", Time: "25 Mins", Posture: "65" },
 ];
 
-function BasicTable() {
+function BasicTable(props) {
+  const sessionData = props.sessionData;
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} style={{ maxHeight: '500px', overflowY: 'auto' }}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
+        <TableHead style={{ position: 'sticky', top: 0 , background:"#e1dfdf"}}>
           <TableRow>
             <TableCell align="center">Date</TableCell>
             <TableCell align="center">Time Spent</TableCell>
@@ -241,11 +372,12 @@ function BasicTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.name}>
-              <TableCell align="center">{row.Date}</TableCell>
-              <TableCell align="center">{row.Time}</TableCell>
-              <TableCell align="center">{row.Posture}</TableCell>
+          {sessionData.map((session) => (
+            <TableRow key={session.name}
+            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+              <TableCell align="center">{moment(session.start_time).format('DD MMM YYYY')}</TableCell>
+              <TableCell align="center">{moment.duration(session.duration, 'seconds').asMinutes().toFixed(2)}</TableCell>
+              <TableCell align="center">{session.good_posture}</TableCell>
             </TableRow>
           ))}
         </TableBody>

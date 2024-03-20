@@ -2,17 +2,12 @@ import React, { useState } from "react";
 import ReactApexChart from "react-apexcharts";
 
 const BarChart = (props) => {
+
+  console.log("Categories ",props.categories);
+  console.log("series ", props.series);
+  const [series, setSeries] = React.useState(props.series);
+
   const [chartData, setChartData] = useState({
-    series: [
-      {
-        name: "App Usage(in mins)",
-        data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
-      },
-      {
-        name: "Good Posture Progress(%)",
-        data: [35, 41, 36, 26, 45, 48, 52, 53, 41],
-      },
-    ],
     options: {
       chart: {
         type: "bar",
@@ -35,17 +30,7 @@ const BarChart = (props) => {
         colors: ["transparent"],
       },
       xaxis: {
-        categories: [
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-        ],
+        categories:props.categories
       },
       //   yaxis: {
       //     title: {
@@ -72,7 +57,7 @@ const BarChart = (props) => {
       <div id="chart">
         <ReactApexChart
           options={chartData.options}
-          series={chartData.series}
+          series={series}
           type="bar"
           height={500}
           width={"100%"}
