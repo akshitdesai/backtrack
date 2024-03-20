@@ -23,7 +23,7 @@ const BarChart = (props) => {
           horizontal: false,
           columnWidth: "45%",
           endingShape: "rounded",
-          borderRadius: 10,
+          borderRadius: 7,
         },
       },
       dataLabels: {
@@ -74,7 +74,8 @@ const BarChart = (props) => {
           options={chartData.options}
           series={chartData.series}
           type="bar"
-          height={350}
+          height={500}
+          width={"100%"}
         />
       </div>
     </div>

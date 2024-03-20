@@ -9,8 +9,8 @@ import SignUpPage from "./views/Signup";
 import Footer from "./views/Footer";
 import MessagePopupBox from "./helper/MessagePopupBox";
 import HomePage from "./views/Home";
-import Dashboard from "./views/Dashboard";
 import Charts from "./views/Charts";
+import Dashboard from "./views/Dashboard.jsx";
 
 // function App() {
 //   return (

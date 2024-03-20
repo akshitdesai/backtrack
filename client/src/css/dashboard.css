@@ -1,0 +1,168 @@
+
+.container{
+    height: 100vh;
+    width: 100vw;
+    background-color: rgb(166, 155, 155);
+    display: flex;
+}
+.side-panel{
+    width:15%;
+    height:100%;
+    background-color: #F4F4F4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 1em;
+    padding-top: 3em;
+}
+.avatar{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.links{
+    display: flex;
+    flex-direction: column;
+    row-gap: 1em;
+}
+.links span{
+    display: flex;
+    align-items: center;
+    column-gap: 0.5em;
+}
+.main-content{
+    width: 100%;
+    background-color: cyan;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.main-content-upper{
+    width: 100%;
+    height: 80%;
+    display: flex;
+    justify-content: space-between;
+}
+.main-content-upper-left{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.main-content-upper-right{
+    width: 30%;
+}
+
+.greetings-section{
+    background-color: white;
+    width: 100%;
+    height: 70%;
+    display: flex;
+    padding:1.5em;
+}
+.greetings-content{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    padding: 0px 2em;
+    width: 100%;
+    border-radius: 24px;
+    height: 100%;
+    background: linear-gradient(89deg, rgba(228, 117, 203, 0.40) 0%, rgba(120, 51, 194, 0.40) 48.33%, rgba(53, 45, 255, 0.40) 87.25%);
+}
+.stats-section{
+    padding:0 1.5em 1.5em;
+    width: 100%;
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    height: 100%;
+    column-gap: 2em;
+}
+
+.stats-section-right{
+    border-radius: 24px;
+    background-color: #F4F4F4;
+    width: 100%;
+    display: flex;
+    flex-direction: row-reverse;
+    height: 100%;
+    justify-content:space-between ;
+}
+
+.eye-image{
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+#eye-image img{
+    height: 7em;
+
+}
+.monitoring-details{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    row-gap: 0.5em;
+    padding: 0 1.5em;
+    width: 100%;
+    height: 100%;
+}
+.get-started{
+    width: fit-content;
+    background-color: black;
+    color: #F4F4F4;
+    padding: 12px 24px;
+}
+
+.stats-section-left{
+    border-radius: 24px;
+    background-color: #F4F4F4;
+    width: 100%;
+    display: flex;
+}
+.analysis-details{
+   width: 100%;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   padding: 0 1.5em
+}
+.analysis-details-progress{
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.main-content-upper-right{
+    background-color: white;
+    display: flex;
+    align-items: center;
+
+}
+
+
+.main-content-lower{
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    column-gap: 1.5em;
+    background-color: white;
+    padding: 0 1.5em 1.5em;
+}
+.apex-chart{
+    width: 100%;
+    padding: 1.5em;
+    background-color: #F4F4F4;
+    border-radius: 24px;
+}
+.session-history{
+    border-radius: 24px;
+    width: 100%;
+    padding: 0 1.5em;
+    background-color: #F4F4F4;
+    display: flex;
+    flex-direction: column;
+   justify-content: space-evenly;
+}

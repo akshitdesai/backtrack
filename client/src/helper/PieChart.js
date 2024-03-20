@@ -49,7 +49,8 @@ const PieChart = () => {
           options={options}
           series={series}
           type="radialBar"
-          height={350}
+          height={250}
+          width={250}
         />
       </div>
     </div>
