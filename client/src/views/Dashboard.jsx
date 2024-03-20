@@ -24,6 +24,7 @@ import "../css/dashboard.css";
 import { v4 as uuidv4 } from "uuid";
 import BarChart from "../helper/BarChart";
 import PieChart from "../helper/PieChart";
+import StopIcon from '@material-ui/icons/Stop';
 
 // const useStyles = makeStyles((theme) => ({
 //   body: {
@@ -87,11 +88,35 @@ import PieChart from "../helper/PieChart";
 function Stream(props) {
   const uniqueId = uuidv4();
   const streamSource = `${apiList.stream}/${uniqueId}`;
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={streamSource} className="App-logo" alt="logo" />
-      </header>
+    <div className="stream-monitoring" style={{ position: 'relative' }}>
+      <img
+        src={streamSource}
+        className="App-logo"
+        alt="logo"
+       
+      />
+   
+        
+        <button
+          className="pause-button"
+          style={{
+            position: 'absolute',
+            top: '90%',
+            left: '90%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 1, // Ensure button is above the image
+            cursor:'pointer',
+            opacity: 0.5,
+          }}
+          onClick={() => {
+            // Handle pause functionality here
+            props.setStreamStarted(false)
+          }}
+        >
+          <StopIcon/>
+        </button>
     </div>
   );
 }
@@ -106,7 +131,7 @@ export default function Dashboard() {
   return (
     <div className="container">
       <div className="side-panel">
-        <h1>backTrack</h1>
+        <h1>BackTrack</h1>
         <div className="avatar">
           <Avatar
             alt="User"
@@ -120,31 +145,37 @@ export default function Dashboard() {
             <img src={dashbaord} alt="" />
             <h3>Dashboard</h3>
           </span>
-          <span>
+          {/* <span>
             <img src={dashbaord} alt="" />
             <h3>Dashboard</h3>
-          </span>
+          </span> */}
         </div>
       </div>
       <div className="main-content">
         <div className="main-content-upper">
           <div className="main-content-upper-left">
-            <div className="greetings-section">
+            {/* <div className="greetings-section">
               <div className="greetings-content">
-                <h1>GOOD MORNING KEZAL!</h1>
+                <h1>GOOD MORNING UMANG!</h1>
                 <p>Start Your Journey to Optimize Your Posture with us.</p>
               </div>
-            </div>
+            </div> */}
             <div className="stats-section">
               <div className="stats-section-right">
+              {streamStarted ? <Stream setStreamStarted={setStreamStarted} /> :
+              <>
                 <div className="eye-image">
                   <img src={eye} alt="eye" />
                 </div>
+               
                 <div className="monitoring-details">
                   <h1>Start Monitoring</h1>
                   <p>Lorem ipsum dolor sit amet consectetur. </p>
-                  <button className="get-started">Get Started</button>
+                  <button className="get-started"  onClick={() => getStarted()}>Get Started</button>
+                  {/* {streamStarted && <Stream />} */}
                 </div>
+                </>
+               }
               </div>
               <div className="stats-section-left">
                 <div className="analysis-details">

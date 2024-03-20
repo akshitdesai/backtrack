@@ -1,10 +1,11 @@
 from flask_restx import Resource
 from flask_restx import Resource
 from flask_jwt_extended import jwt_required
-from flask import Response
+from flask import Response, request
 
-from .service import UserService
+from .service import StreamService
 from .dto import StreamDto
+from datetime import datetime
 
 api = StreamDto.api
 data_resp = StreamDto.data_resp
@@ -54,9 +55,16 @@ pose = mp_pose.Pose()
 # exchanges of the frames (useful for multiple browsers/tabs
 # are viewing the stream)
 lock = threading.Lock()
+good_frames = 0
+bad_frames = 0
+cap = None
 
 def generate():
     # Initialize frame counters.
+    global good_frames
+    global bad_frames
+    global cap
+
     good_frames = 0
     bad_frames = 0
 
@@ -206,11 +214,12 @@ def generate():
         # yield the output frame in the byte format
         yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
     # release the camera
-    cv2.release()
+    # cv2.release()
+
 
 
 @api.route("/<string:stream_id>")
-class StreamGet(Resource):
+class StreamStart(Resource):
     @api.doc(
         "Get a specific user",
         responses={
@@ -218,10 +227,45 @@ class StreamGet(Resource):
             404: "User not found!",
         },
     )
-    # @jwt_required()
     def get(self, stream_id):
         """ Get a specific user's data by their username """
 
-        print(stream_id)
+        StreamService.start_stream(stream_id)
 
         return Response(generate(), mimetype="multipart/x-mixed-replace; boundary=frame")
+
+@api.route("/<string:stream_id>/stop")
+class StreamStop(Resource):
+
+    def get(self, stream_id):
+        """ Get a specific user's data by their username """
+        global cap
+        cap.release()
+        cv2.destroyAllWindows()
+        global good_frames, bad_frames
+
+        good_posture = good_frames * 100 / (good_frames+bad_frames)
+        return StreamService.stop_stream(stream_id, good_posture)
+@api.route("/history")
+class StreamGet(Resource):
+    def get(self):
+        """ Get last N entries in the database for a stream """
+        try:
+            # n = int(request.args.get('n', default=10))  # Get the value of 'n' query parameter, default to 10 if not provided
+            return StreamService.get_last_n_streams()
+        except ValueError:
+            return "Invalid value for parameter 'n'", 400
+
+
+@api.route("/date/<string:date>")
+class StreamByDate(Resource):
+    def get(self, date):
+        """ Get all streams for a given date """
+        try:
+
+            # Parse the date string into a datetime object
+            date = datetime.strptime(date, '%Y-%m-%d').date()  # Assuming date format is YYYY-MM-DD
+
+            return StreamService.get_streams_by_date(date), 200
+        except ValueError:
+            return "Invalid date format. Please provide the date in YYYY-MM-DD format.", 400

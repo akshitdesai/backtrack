@@ -4,14 +4,14 @@ from flask_restx import Namespace, fields
 class StreamDto:
 
     api = Namespace("stream", description="Stream related operations.")
-    user = api.model(
+    stream = api.model(
         "Stream object",
         {
-            "email": fields.String,
-            "name": fields.String,
-            "username": fields.String,
-            "joined_date": fields.DateTime,
-            "role_id": fields.Integer,
+            "id": fields.String,
+            "start_time": fields.DateTime,
+            "end_time": fields.DateTime,
+            "duration": fields.Integer,
+            "good_posture": fields.Integer,
         },
     )
 
@@ -20,6 +20,6 @@ class StreamDto:
         {
             "status": fields.Boolean,
             "message": fields.String,
-            "user": fields.Nested(user),
+            "user": fields.Nested(stream),
         },
     )

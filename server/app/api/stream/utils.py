@@ -4,10 +4,10 @@ def load_data(user_db_obj):
     Parameters:
     - User db object
     """
-    from app.models.schemas import UserSchema
+    from app.models.schemas import StreamSchema
 
-    user_schema = UserSchema()
+    stream_schema = StreamSchema()
 
-    data = user_schema.dump(user_db_obj)
+    data = stream_schema.dump(user_db_obj)
 
     return data
