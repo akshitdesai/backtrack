@@ -10,6 +10,7 @@ import Footer from "./views/Footer";
 import MessagePopupBox from "./helper/MessagePopupBox";
 import HomePage from "./views/Home";
 import Dashboard from "./views/Dashboard";
+import Charts from "./views/Charts";
 
 // function App() {
 //   return (
@@ -53,7 +54,7 @@ function App() {
               <Route path="/signup" element={<SignUpPage />} />
               <Route path="/home" element={<HomePage />} />
               <Route path="/dashboard" element={<Dashboard />} />
-              
+              <Route path="/charts" element={<Charts />} />
             </Routes>
           </Grid>
           {/* <Grid item>
