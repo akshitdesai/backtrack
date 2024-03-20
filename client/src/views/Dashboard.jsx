@@ -376,8 +376,12 @@ function BasicTable(props) {
             <TableRow key={session.name}
             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
               <TableCell align="center">{moment(session.start_time).format('DD MMM YYYY')}</TableCell>
-              <TableCell align="center">{moment.duration(session.duration, 'seconds').asMinutes().toFixed(2)}</TableCell>
-              <TableCell align="center">{session.good_posture}</TableCell>
+              <TableCell align="center">
+                {session.duration > 60
+                  ? `${moment.duration(session.duration, 'seconds').asMinutes().toFixed(2)} minutes`
+                  : `${session.duration} seconds`}
+              </TableCell>
+              <TableCell align="center">{parseInt(session.good_posture)}%</TableCell>
             </TableRow>
           ))}
         </TableBody>
