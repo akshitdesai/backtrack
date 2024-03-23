@@ -1,201 +1,220 @@
-
-.container{
-    height: 100vh;
-    width: 100vw;
-    background-color: rgb(166, 155, 155);
-    display: flex;
+.container {
+  height: 100vh;
+  width: 100vw;
+  background-color: rgb(166, 155, 155);
+  display: flex;
+  font-family: "Inter";
 }
-.side-panel{
-    width:15%;
-    height:100%;
-    background-color: #F4F4F4;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    row-gap: 1em;
-    padding-top: 3em;
+.side-panel {
+  width: 15%;
+  height: 100%;
+  background-color: #f4f4f4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 1em;
+  padding-top: 3em;
 }
-.avatar{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.links{
-    display: flex;
-    flex-direction: column;
-    row-gap: 1em;
+.links {
+  display: flex;
+  flex-direction: column;
+  row-gap: 1em;
 }
-.links span{
-    display: flex;
-    align-items: center;
-    column-gap: 0.5em;
+.links span {
+  display: flex;
+  align-items: center;
+  column-gap: 0.5em;
 }
-.main-content{
-    width: 100%;
-    background-color: cyan;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+.main-content {
+  width: 100%;
+  background-color: cyan;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
-.main-content-upper{
-    width: 100%;
-    height: 80%;
-    display: flex;
-    justify-content: space-between;
+.main-content-upper {
+  width: 100%;
+  height: 80%;
+  display: flex;
+  justify-content: space-between;
 }
-.main-content-upper-left{
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+.main-content-upper-left {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
-.main-content-upper-right{
-    width: 30%;
-}
-
-.greetings-section{
-    background-color: white;
-    width: 100%;
-    height: 70%;
-    display: flex;
-    padding:1.5em;
-}
-.greetings-content{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: start;
-    padding: 7px 2em;
-    width: 100%;
-    border-radius: 24px;
-    height: 100%;
-    background: linear-gradient(89deg, rgba(228, 117, 203, 0.40) 0%, rgba(120, 51, 194, 0.40) 48.33%, rgba(53, 45, 255, 0.40) 87.25%);
-}
-.stats-section{
-    
-    padding:0.5em 1.5em 1.5em;
-    width: 100%;
-    background-color: white;
-    display: flex;
-    justify-content: space-between;
-    height: 100%;
-    column-gap: 2em;
+.main-content-upper-right {
+  width: 30%;
 }
 
-.stats-section-right{
-    border-radius: 24px;
-    background-color: #F4F4F4;
-    width: 100%;
-    display: flex;
-    flex-direction: row-reverse;
-    height: 100%;
-    justify-content:space-between ;
+.greetings-section {
+  background-color: white;
+  width: 100%;
+  height: 70%;
+  display: flex;
+  padding: 1.5em;
+}
+.greetings-content {
+  display: flex;
+  padding: 1em 2em;
+  width: 100%;
+  border-radius: 24px;
+  height: 100%;
+  /* background: linear-gradient(
+    89deg,
+    rgba(228, 117, 203, 0.4) 0%,
+    rgba(120, 51, 194, 0.4) 48.33%,
+    rgba(53, 45, 255, 0.4) 87.25%
+  ); */
+  background: #f4f4f4;
+  column-gap: 4em;
 }
 
-.eye-image{
-    width: 100%;
-    height: 100%;
-    display: flex;
+.notification-form {
+  display: flex;
+  align-items: center;
+  /* grid-gap: 1rem; */
+  gap: 1rem;
 }
-#eye-image img{
-    height: 7em;
-
-}
-.monitoring-details{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    row-gap: 0.5em;
-    padding: 0 1.5em;
-    width: 100%;
-    height: 100%;
-}
-.get-started{
-    width: fit-content;
-    background: #352DFF;
-    color: #F4F4F4;
-    padding: 12px 24px;
-    cursor: pointer;
-    margin-top: 30%;
-    border-radius: 4px;
-
+.stats-section {
+  padding: 0.5em 1.5em 1.5em;
+  width: 100%;
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+  column-gap: 2em;
 }
 
-.stats-section-left{
-    border-radius: 24px;
-    background-color: #F4F4F4;
-    width: 100%;
-    display: flex;
-}
-.analysis-details{
-   width: 100%;
-   display: flex;
-   flex-direction: column;
-   justify-content: center;
-   padding: 0 1.5em
-}
-.analysis-details-progress{
-    width: 100%;
-    display: flex;
-    align-items: center;
+.stats-section-right {
+  border-radius: 24px;
+  background-color: #f4f4f4;
+  width: 100%;
+  display: flex;
+  flex-direction: row-reverse;
+  height: 100%;
+  justify-content: space-between;
 }
 
-.main-content-upper-right{
-    background-color: white;
-    display: flex;
-    align-items: center;
-
+.eye-image {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+#eye-image img {
+  height: 7em;
+}
+.monitoring-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  row-gap: 0.5em;
+  padding: 0 1.5em;
+  width: 100%;
+  height: 100%;
+}
+.get-started {
+  width: fit-content;
+  background: #352dff;
+  color: #f4f4f4;
+  padding: 12px 24px;
+  cursor: pointer;
+  margin-top: 30%;
+  border-radius: 4px;
 }
 
-
-.main-content-lower{
-    height: 100%;
-    display: flex;
-    justify-content: space-between;
-    column-gap: 1.5em;
-    background-color: white;
-    padding: 0 1.5em 1.5em;
+.stats-section-left {
+  border-radius: 24px;
+  background-color: #f4f4f4;
+  width: 100%;
+  display: flex;
 }
-.apex-chart{
-    width: 100%;
-    padding: 1.5em;
-    background-color: #F4F4F4;
-    border-radius: 24px;
+.analysis-details {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 1.5em;
 }
-.session-history{
-    border-radius: 24px;
-    width: 100%;
-    padding: 0 1.5em;
-    background-color: #F4F4F4;
-    display: flex;
-    flex-direction: column;
-   justify-content: space-evenly;
+.analysis-details-progress {
+  width: 100%;
+  display: flex;
+  align-items: center;
 }
 
-.stream-monitoring{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    row-gap: 0.5em;
-    padding: 0 1.5em;
-    width: 100%;
-    height: 100%;
+.main-content-upper-right {
+  background-color: white;
+  display: flex;
+  align-items: center;
+}
+
+.main-content-lower {
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  column-gap: 1.5em;
+  background-color: white;
+  padding: 0 1.5em 1.5em;
+}
+.apex-chart {
+  width: 100%;
+  padding: 1.5em;
+  background-color: #f4f4f4;
+  border-radius: 24px;
+}
+.session-history {
+  border-radius: 24px;
+  width: 100%;
+  padding: 0 1.5em;
+  background-color: #f4f4f4;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+.session-history h1 {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.stream-monitoring {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  row-gap: 0.5em;
+  padding: 0 1.5em;
+  width: 100%;
+  height: 100%;
 }
 App {
-    text-align: center;
-  }
-  
-  .App-logo {
-    height: 30vmin;
-  }
-  
-  .App-header {
-    background-color: #282c34;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
-  }
+  text-align: center;
+}
+
+.App-logo {
+  height: 30vmin;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+.set-timer {
+  width: fit-content;
+  background: inherit;
+  color: black;
+  padding: 12px 24px;
+  cursor: pointer;
+  border-radius: 4px;
+  border-color: #d2d2d2;
+}

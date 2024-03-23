@@ -1,9 +1,17 @@
 import {
   Avatar,
+  Box,
   Button,
+  FormControl,
+  FormHelperText,
   Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
   Typography,
   makeStyles,
+  useTheme,
 } from "@material-ui/core";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -24,106 +32,50 @@ import "../css/dashboard.css";
 import { v4 as uuidv4 } from "uuid";
 import BarChart from "../helper/BarChart";
 import PieChart from "../helper/PieChart";
-import StopIcon from '@material-ui/icons/Stop';
+import StopIcon from "@material-ui/icons/Stop";
 import axios from "axios";
 import dayjs from "dayjs";
 import moment from "moment";
 import { initializeApp } from "firebase/app";
 import { getMessaging } from "firebase/messaging/sw";
 import { getToken } from "firebase/messaging";
-
-// const useStyles = makeStyles((theme) => ({
-//   body: {
-//     height: "100vh",
-//   },
-//   sideBar: {
-//     display: "inline-flex",
-//     padding: "50px 25px 133px 25px",
-//     flexDirection: "column",
-//     alignItems: "center",
-//     background: "#F4F4F4",
-//     height: "100%",
-//     // gap: "406px",
-//   },
-//   titleBox: {
-//     display: "inline-flex",
-//     padding: "25px 440px 34px 30px",
-//     alignItems: "center",
-//     borderRadius: "24px",
-//     height: "2%",
-//     width: "37%",
-//     marginTop: "2%",
-
-//     background:
-//       "linear-gradient(89deg, rgba(228, 117, 203, 0.40) 0%, rgba(120, 51, 194, 0.40) 48.33%, rgba(53, 45, 255, 0.40) 87.25%)",
-//   },
-//   smallGraph: {
-//     borderRadius: "24px",
-//     background: "#F4F4F4",
-//     height: "250px",
-//     padding: "20px",
-//     // marginRight:"2px"
-//   },
-//   startButtonStyle: {
-//     borderRadius: "4px",
-//     border: "1px solid var(--Black, #000);",
-//     background: "#191825",
-//     "&:hover": {
-//       background: "#1e1c3a", // Change this to your desired hover background color
-//     },
-//     padding: "12px 24px",
-//   },
-//   buttonTitle: {
-//     color: "#FFF",
-//     fontFamily: "Inter",
-//     fontSize: "16px",
-//     fontStyle: "normal",
-//     fontWeight: 400,
-//     lineHeight: "150%",
-//   },
-//   percentageText: {
-//     color: "#EA770D",
-//     fontFamily: "Inter",
-//     fontSize: "40px",
-//     fontStyle: "normal",
-//     fontWeight: 600,
-//     lineHeight: "120%",
-//   },
-// }));
+import TableFooter from "@mui/material/TableFooter";
+import TablePagination from "@mui/material/TablePagination";
+import IconButton from "@mui/material/IconButton";
+import FirstPageIcon from "@material-ui/icons/FirstPage";
+import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
+import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
+import LastPageIcon from "@material-ui/icons/LastPage";
+import PropTypes from "prop-types";
+import { PopupContext } from "../App";
 
 function Stream(props) {
   const uniqueId = uuidv4();
   const streamSource = `${apiList.stream}/${uniqueId}`;
-  
+
   return (
-    <div className="stream-monitoring" style={{ position: 'relative' }}>
-      <img
-        src={streamSource}
-        className="App-logo"
-        alt="logo"
-       
-      />
-   
-        
-        <button
-          className="pause-button"
-          style={{
-            position: 'absolute',
-            top: '90%',
-            left: '90%',
-            transform: 'translate(-50%, -50%)',
-            zIndex: 1, // Ensure button is above the image
-            cursor:'pointer',
-            opacity: 0.5,
-          }}
-          onClick={() => {
-            // Handle pause functionality here
-            props.setStreamStarted(false)
-            props.onPause(uniqueId);
-          }}
-        >
-          <StopIcon/>
-        </button>
+    <div className="stream-monitoring" style={{ position: "relative" }}>
+      <img src={streamSource} className="App-logo" alt="logo" />
+
+      <button
+        className="pause-button"
+        style={{
+          position: "absolute",
+          top: "90%",
+          left: "90%",
+          transform: "translate(-50%, -50%)",
+          zIndex: 1, // Ensure button is above the image
+          cursor: "pointer",
+          opacity: 0.5,
+        }}
+        onClick={() => {
+          // Handle pause functionality here
+          props.setStreamStarted(false);
+          props.onPause(uniqueId);
+        }}
+      >
+        <StopIcon />
+      </button>
     </div>
   );
 }
@@ -131,126 +83,167 @@ export default function Dashboard() {
   // const styles = useStyles();
   const [streamStarted, setStreamStarted] = React.useState(false);
   const [sessionData, setSessionData] = React.useState([]);
-  const [historySeries,setHistorySeries] = React.useState([]);
+  const [historySeries, setHistorySeries] = React.useState([]);
   const [historyDates, setHistoryDates] = React.useState([]);
   const [averagePosture, setAveragePosture] = React.useState(0);
+
+  const [notificationTimerDetails, setNotificationTimerDetails] =
+    React.useState({
+      time: "",
+      unit: "",
+    });
+  const setPopup = React.useContext(PopupContext);
 
   React.useEffect(() => {
     getSessionHistory();
     initializeFirebase();
-
   }, []);
   const initializeFirebase = () => {
     const firebaseConfig = {
       // Your Firebase configuration
-      "apiKey": "AIzaSyCHCMf9Uy2t9F5XFIcSErdiVpgaKt9U3tI",
-      "authDomain": "backtrack-8231c.firebaseapp.com",
-      "projectId": "backtrack-8231c",
-      "storageBucket": "backtrack-8231c.appspot.com",
-      "messagingSenderId": "261927245122",
-      "appId": "1:261927245122:web:06664f285faf4b82e524db",
-      "measurementId": "G-N5Y7J4ESNL"
+      apiKey: "AIzaSyCHCMf9Uy2t9F5XFIcSErdiVpgaKt9U3tI",
+      authDomain: "backtrack-8231c.firebaseapp.com",
+      projectId: "backtrack-8231c",
+      storageBucket: "backtrack-8231c.appspot.com",
+      messagingSenderId: "261927245122",
+      appId: "1:261927245122:web:06664f285faf4b82e524db",
+      measurementId: "G-N5Y7J4ESNL",
     };
 
     const app = initializeApp(firebaseConfig);
 
     const messaging = getMessaging(app);
 
-      console.log('Requesting permission...');
-      Notification.requestPermission().then((permission) => {
-        if (permission === 'granted') {
-          console.log('Notification permission granted.');
-        }
-      })
-    
-
-
-    getToken(messaging, { vapidKey: 'BE7yOAmKFq4OxtJ-9LkHo11j7JyVfeH9ts8dNu4YZ9PphOOgzQ7aT3UUvniF0VQHzLi_CI8rOgeAoaRI8_yHQNA' }).then((currentToken) => {
-      if (currentToken) {
-        console.log("token ", currentToken)
-        axios.get(`${apiList.registerToken}/${currentToken}`)
-        .then((response) => {
-          console.log("Token - > ", response);
-        }
-        )
-        .catch((err) => {
-          console.log(err);
-        }
-        )
-      } else {
-        // Show permission request UI
-        console.log('No registration token available. Request permission to generate one.');
-        // ...
+    console.log("Requesting permission...");
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        console.log("Notification permission granted.");
       }
-    }).catch((err) => {
-      console.log('An error occurred while retrieving token. ', err);
-      // ...
     });
 
+    getToken(messaging, {
+      vapidKey:
+        "BE7yOAmKFq4OxtJ-9LkHo11j7JyVfeH9ts8dNu4YZ9PphOOgzQ7aT3UUvniF0VQHzLi_CI8rOgeAoaRI8_yHQNA",
+    })
+      .then((currentToken) => {
+        if (currentToken) {
+          console.log("token ", currentToken);
+          axios
+            .get(`${apiList.registerToken}/${currentToken}`)
+            .then((response) => {
+              console.log("Token - > ", response);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        } else {
+          // Show permission request UI
+          console.log(
+            "No registration token available. Request permission to generate one."
+          );
+          // ...
+        }
+      })
+      .catch((err) => {
+        console.log("An error occurred while retrieving token. ", err);
+        // ...
+      });
   };
   const getSessionHistory = () => {
     const getSessionHistory = `${apiList.history}`;
-    axios.get(getSessionHistory)
+    axios
+      .get(getSessionHistory)
       .then((response) => {
         console.log("Session - > ", response.data);
         const categories = Object.keys(response.data);
-const series = [
-    {
-        name: "App Usage(in mins)",
-        data: categories.map(date => parseInt (response.data[date].duration_total/60))
-    },
-    {
-        name: "Good Posture Progress(%)",
-        data: categories.map(date => parseInt(response.data[date].average_good_posture))
-    }
-];
-const postureValues = series[1].data;
-const totalPosture = postureValues.reduce((acc, val) => acc + val, 0);
-const averagePosture = parseInt(totalPosture / postureValues.length);
+        const series = [
+          {
+            name: "App Usage(in mins)",
+            data: categories.map((date) =>
+              parseInt(response.data[date].duration_total / 60)
+            ),
+          },
+          {
+            name: "Good Posture Progress(%)",
+            data: categories.map((date) =>
+              parseInt(response.data[date].average_good_posture)
+            ),
+          },
+        ];
+        const postureValues = series[1].data;
+        const totalPosture = postureValues.reduce((acc, val) => acc + val, 0);
+        const averagePosture = parseInt(totalPosture / postureValues.length);
 
-console.log("Average posture", averagePosture);
+        console.log("Average posture", averagePosture);
 
-setHistorySeries(series);
-setHistoryDates(categories);
-setAveragePosture(averagePosture)
-       
+        setHistorySeries(series);
+        setHistoryDates(categories);
+        setAveragePosture(averagePosture);
       })
       .catch((err) => {
         console.log(err);
       });
-  }
+  };
   const getStarted = () => {
     setStreamStarted(true);
   };
-  const onStreamPause = (uniqueId) =>{
-    const stop = "stop"
+  const onStreamPause = (uniqueId) => {
+    const stop = "stop";
     const pauseStream = `${apiList.stream}/${uniqueId}/${stop}`;
-    axios.get(pauseStream)
-    .then((response) => {
-      console.log(response);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-  
-  }
+    axios
+      .get(pauseStream)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
-  const getSessionByDate = (date) =>{
-  const formattedDate = moment(date.$d).format('YYYY-MM-DD'); 
-  console.log("Formatted date", formattedDate); 
+  const getSessionByDate = (date) => {
+    const formattedDate = moment(date.$d).format("YYYY-MM-DD");
+    console.log("Formatted date", formattedDate);
     const getSession = `${apiList.session}/${formattedDate}`;
-    axios.get(getSession)
-    .then((response) => {
-      console.log("Session - > ",response.data[0]);
-      const filteredData = response.data[0].filter((session)=>session.duration!=null)
-      setSessionData(filteredData.reverse());
-    })
-    .catch((err) => {
-      console.log(err);
+    axios
+      .get(getSession)
+      .then((response) => {
+        console.log("Session - > ", response.data[0]);
+        const filteredData = response.data[0].filter(
+          (session) => session.duration != null
+        );
+        setSessionData(filteredData.reverse());
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleNotificationTimer = (event) => {
+    event.preventDefault(); // Prevent page refresh
+    const selectedUnit = notificationTimerDetails.unit;
+    let finalDuration = 0;
+    if (selectedUnit.match("minute")) {
+      finalDuration = 60 * notificationTimerDetails.time;
+    } else if (selectedUnit.match("hour")) {
+      finalDuration = 3600 * notificationTimerDetails.time;
+    } else {
+      finalDuration = notificationTimerDetails.time;
+    }
+    console.log("Notifiaction timeer details", finalDuration);
+    setPopup({
+      open: true,
+      severity: "error",
+      message: "You are sitting inappropriately since 10 minutes!",
     });
-  }
+    setNotificationTimerDetails({ time: "", unit: "" });
+  };
 
-
+  const handleInput = (key, value) => {
+    setNotificationTimerDetails((prevState) => ({
+      ...prevState,
+      [key]: value,
+    }));
+  };
 
   return (
     <div className="container">
@@ -278,29 +271,79 @@ setAveragePosture(averagePosture)
       <div className="main-content">
         <div className="main-content-upper">
           <div className="main-content-upper-left">
-            {/* <div className="greetings-section">
+            <div className="greetings-section">
               <div className="greetings-content">
-                <h1>GOOD MORNING UMANG!</h1>
-                <p>Start Your Journey to Optimize Your Posture with us.</p>
+                <div>
+                  <h1>GOOD MORNING UMANG!</h1>
+                  <p>Start Your Journey to Optimize Your Posture with us.</p>
+                </div>
+                <div>
+                  <p style={{ color: "#352DFF", marginBottom: "1em" }}>
+                    Adjust Notification Time
+                  </p>
+                  <form onSubmit={handleNotificationTimer}>
+                    <div className="notification-form">
+                      <TextField
+                        label="Time"
+                        inputProps={{ type: "number" }}
+                        variant="outlined"
+                        value={notificationTimerDetails.time}
+                        onChange={(event) =>
+                          handleInput("time", event.target.value)
+                        }
+                        style={{ flex: 1 }}
+                      />
+
+                      <FormControl variant="outlined" style={{ flex: 1 }}>
+                        <InputLabel id="demo-simple-select-helper-label">
+                          Unit
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-helper-label"
+                          id="demo-simple-select-helper"
+                          value={notificationTimerDetails.unit}
+                          label="Unit"
+                          onChange={(event) =>
+                            handleInput("unit", event.target.value)
+                          }
+                        >
+                          <MenuItem value={"second"}>Second</MenuItem>
+                          <MenuItem value={"minute"}>Minute</MenuItem>
+                          <MenuItem value={"hour"}>Hour</MenuItem>
+                        </Select>
+                      </FormControl>
+                      <button className="set-timer">Set</button>
+                    </div>
+                  </form>
+                </div>
               </div>
-            </div> */}
+            </div>
             <div className="stats-section">
               <div className="stats-section-right">
-              {streamStarted ? <Stream setStreamStarted={setStreamStarted} onPause={onStreamPause}/> :
-              <>
-                <div className="eye-image">
-                  <img src={eye} alt="eye"/>
-                </div>
-               
-                <div className="monitoring-details">
-                  <h1>Start Monitoring</h1>
-                  <p>Start your monitor session
-now. </p>
-                  <button className="get-started"  onClick={() => getStarted()}>Get Started</button>
-                  {/* {streamStarted && <Stream />} */}
-                </div>
-                </>
-               }
+                {streamStarted ? (
+                  <Stream
+                    setStreamStarted={setStreamStarted}
+                    onPause={onStreamPause}
+                  />
+                ) : (
+                  <>
+                    <div className="eye-image">
+                      <img src={eye} alt="eye" />
+                    </div>
+
+                    <div className="monitoring-details">
+                      <h1>Start Monitoring</h1>
+                      <p>Start your monitor session now. </p>
+                      <button
+                        className="get-started"
+                        onClick={() => getStarted()}
+                      >
+                        Get Started
+                      </button>
+                      {/* {streamStarted && <Stream />} */}
+                    </div>
+                  </>
+                )}
               </div>
               <div className="stats-section-left">
                 <div className="analysis-details">
@@ -309,25 +352,30 @@ now. </p>
                   <h2>Success</h2> */}
                 </div>
                 <div className="analysis-details-progress">
-                  {averagePosture>0 && <PieChart averagePosture = {averagePosture}/>}
+                  {averagePosture > 0 && (
+                    <PieChart averagePosture={averagePosture} />
+                  )}
                 </div>
               </div>
             </div>
           </div>
           <div className="main-content-upper-right">
-            <BasicDateCalendar onDateChage = {getSessionByDate} />
+            <BasicDateCalendar onDateChage={getSessionByDate} />
           </div>
         </div>
         <div className="main-content-lower">
           <div className="apex-chart">
             <h1>Progress Report</h1>
+
             <div>
-              {historyDates.length>0 && <BarChart series={historySeries} categories = {historyDates}/>}
+              {historyDates.length > 0 && (
+                <BarChart series={historySeries} categories={historyDates} />
+              )}
             </div>
           </div>
           <div className="session-history">
-          <h1>Session History</h1>
-            <BasicTable sessionData = {sessionData}/>
+            <h1>Session History</h1>
+            <BasicTable sessionData={sessionData} />
           </div>
         </div>
       </div>
@@ -339,32 +387,127 @@ function BasicDateCalendar(props) {
   const [value, setValue] = React.useState(dayjs());
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DateCalendar  
+      <DateCalendar
         // value={selectedDate}
-        value={value} onChange={(newValue) => {setValue(newValue); props.onDateChage(newValue);}}
+        value={value}
+        onChange={(newValue) => {
+          setValue(newValue);
+          props.onDateChage(newValue);
+        }}
         // onClick={props.onDateChage(value)}
-        />
+      />
     </LocalizationProvider>
   );
 }
 
-const rows = [
-  { Date: " 10 Mar 2024", Time: "25 Mins", Posture: "65" },
-  { Date: " 10 Mar 2024", Time: "25 Mins", Posture: "65" },
-  { Date: " 10 Mar 2024", Time: "25 Mins", Posture: "65" },
-  { Date: " 10 Mar 2024", Time: "25 Mins", Posture: "65" },
-  { Date: " 10 Mar 2024", Time: "25 Mins", Posture: "65" },
-  { Date: " 10 Mar 2024", Time: "25 Mins", Posture: "65" },
-  { Date: " 10 Mar 2024", Time: "25 Mins", Posture: "65" },
-  { Date: " 10 Mar 2024", Time: "25 Mins", Posture: "65" },
+const sessionData = [
+  { start_time: "10 Mar 2024", duration: 25, good_posture: 65 },
+  { start_time: "11 Mar 2024", duration: 30, good_posture: 70 },
+  { start_time: "12 Mar 2024", duration: 20, good_posture: 60 },
+  { start_time: "13 Mar 2024", duration: 35, good_posture: 75 },
+  { start_time: "14 Mar 2024", duration: 40, good_posture: 80 },
+  { start_time: "15 Mar 2024", duration: 45, good_posture: 85 },
+  { start_time: "16 Mar 2024", duration: 22, good_posture: 68 },
+  { start_time: "17 Mar 2024", duration: 28, good_posture: 72 },
+  { start_time: "10 Mar 2024", duration: 25, good_posture: 65 },
+  { start_time: "11 Mar 2024", duration: 30, good_posture: 70 },
+  { start_time: "12 Mar 2024", duration: 20, good_posture: 60 },
+  { start_time: "13 Mar 2024", duration: 35, good_posture: 75 },
+  { start_time: "14 Mar 2024", duration: 40, good_posture: 80 },
+  { start_time: "15 Mar 2024", duration: 45, good_posture: 85 },
+  { start_time: "16 Mar 2024", duration: 22, good_posture: 68 },
+  { start_time: "17 Mar 2024", duration: 28, good_posture: 72 },
 ];
+function TablePaginationActions(props) {
+  const theme = useTheme();
+  const { count, page, rowsPerPage, onPageChange } = props;
 
-function BasicTable(props) {
-  const sessionData = props.sessionData;
+  const handleFirstPageButtonClick = (event) => {
+    onPageChange(event, 0);
+  };
+
+  const handleBackButtonClick = (event) => {
+    onPageChange(event, page - 1);
+  };
+
+  const handleNextButtonClick = (event) => {
+    onPageChange(event, page + 1);
+  };
+
+  const handleLastPageButtonClick = (event) => {
+    onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+  };
+
   return (
-    <TableContainer component={Paper} style={{ maxHeight: '500px', overflowY: 'auto' }}>
+    <Box sx={{ flexShrink: 0, ml: 2.5 }}>
+      <IconButton
+        onClick={handleFirstPageButtonClick}
+        disabled={page === 0}
+        aria-label="first page"
+      >
+        {theme.direction === "rtl" ? <LastPageIcon /> : <FirstPageIcon />}
+      </IconButton>
+      <IconButton
+        onClick={handleBackButtonClick}
+        disabled={page === 0}
+        aria-label="previous page"
+      >
+        {theme.direction === "rtl" ? (
+          <KeyboardArrowRight />
+        ) : (
+          <KeyboardArrowLeft />
+        )}
+      </IconButton>
+      <IconButton
+        onClick={handleNextButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        aria-label="next page"
+      >
+        {theme.direction === "rtl" ? (
+          <KeyboardArrowLeft />
+        ) : (
+          <KeyboardArrowRight />
+        )}
+      </IconButton>
+      <IconButton
+        onClick={handleLastPageButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        aria-label="last page"
+      >
+        {theme.direction === "rtl" ? <FirstPageIcon /> : <LastPageIcon />}
+      </IconButton>
+    </Box>
+  );
+}
+
+TablePaginationActions.propTypes = {
+  count: PropTypes.number.isRequired,
+  onPageChange: PropTypes.func.isRequired,
+  page: PropTypes.number.isRequired,
+  rowsPerPage: PropTypes.number.isRequired,
+};
+function BasicTable(props) {
+  const sessionData1 = props.sessionData;
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  const emptyRows =
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - sessionData.length) : 0;
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+  return (
+    <TableContainer component={Paper} sx={{ maxHeight: 440 }}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead style={{ position: 'sticky', top: 0 , background:"#e1dfdf"}}>
+        <TableHead
+          style={{ position: "sticky", top: 0, background: "#e1dfdf" }}
+        >
           <TableRow>
             <TableCell align="center">Date</TableCell>
             <TableCell align="center">Time Spent</TableCell>
@@ -372,118 +515,64 @@ function BasicTable(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {sessionData.length>0 ? sessionData.map((session) => (
-            <TableRow key={session.name}
-            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-              <TableCell align="center">{moment(session.start_time).format('DD MMM YYYY')}</TableCell>
+          {(rowsPerPage > 0
+            ? sessionData.slice(
+                page * rowsPerPage,
+                page * rowsPerPage + rowsPerPage
+              )
+            : sessionData
+          ).map((session) => (
+            <TableRow
+              key={session.name}
+              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+            >
+              <TableCell align="center">
+                {moment(session.start_time).format("DD MMM YYYY")}
+              </TableCell>
               <TableCell align="center">
                 {session.duration > 60
-                  ? `${parseInt(moment.duration(session.duration, 'seconds').asMinutes().toFixed(2))} minutes`
+                  ? `${parseInt(
+                      moment
+                        .duration(session.duration, "seconds")
+                        .asMinutes()
+                        .toFixed(2)
+                    )} minutes`
                   : `${session.duration} seconds`}
               </TableCell>
-              <TableCell align="center">{parseInt(session.good_posture)}%</TableCell>
-            </TableRow>
-          )):(
-            <TableRow>
-              <TableCell colSpan={3} align="center">
-                Please select a date.
+              <TableCell align="center">
+                {parseInt(session.good_posture)}%
               </TableCell>
             </TableRow>
-          )
-            
-          }
+          ))}
+          {emptyRows > 0 && (
+            <TableRow style={{ height: 53 * emptyRows }}>
+              <TableCell colSpan={6} />
+            </TableRow>
+          )}
         </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
+              colSpan={3}
+              count={sessionData.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              slotProps={{
+                select: {
+                  inputProps: {
+                    "aria-label": "sessionData per page",
+                  },
+                  native: true,
+                },
+              }}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              ActionsComponent={TablePaginationActions}
+            />
+          </TableRow>
+        </TableFooter>
       </Table>
     </TableContainer>
   );
 }
-
-// <Grid container className={styles.body} spacing={3}>
-//   <Grid item xs={2}>
-//     <Grid container spacing={4} item className={styles.sideBar}>
-//       <Grid item className="heading3">
-//         <b>BackTrack</b>
-//       </Grid>
-//       <Grid item>
-//         <Avatar
-//           alt="User"
-//           style={{ objectFit: "fill", height: "60px", width: "60px" }}
-//         />
-//       </Grid>
-//       <Grid item className="heading3">
-//         Umang Patel
-//       </Grid>
-//       <Grid item>
-//         <Grid container alignItems="center">
-//           <Grid item>
-//             <img
-//               src={dashbaord}
-//               alt="Dashboard Icon"
-//               style={{ cursor: "pointer", marginRight: "10px" }} // Add margin to create space between the icon and text
-//             />
-//           </Grid>
-//           <Grid item>
-//             <p className="heading3">Dashboard</p>
-//           </Grid>
-//         </Grid>
-//       </Grid>
-//     </Grid>
-//   </Grid>
-//   <Grid item xs={6}>
-//     <Grid className={styles.titleBox}>
-//       <Grid item className="heading2" style={{ fontSize: "22px" }}>
-//         Good Morning Umang!
-//       </Grid>
-//     </Grid>
-//     <Grid item container style={{ marginTop: "2%", marginLeft: "1%" }}>
-//       <Grid item xs={6} className={styles.smallGraph}>
-//         <Grid item container>
-//           <Grid item xs={6}>
-//             <Typography className="heading2" style={{ fontSize: "26px" }}>
-//               Start Monitoring
-//             </Typography>
-//             <Grid style={{ marginTop: "10%" }}>
-//               <Button
-//                 className={styles.startButtonStyle}
-//                 onClick={() => getStarted()}
-//               >
-//                 <Typography className={styles.buttonTitle}>
-//                   Get Started
-//                 </Typography>
-//               </Button>
-//               {streamStarted && <Stream />}
-//             </Grid>
-//           </Grid>
-
-//           <Grid item xs={6}>
-//             <img
-//               src={eye}
-//               alt="Analysis Icon"
-//               style={{ cursor: "pointer" }} // Add margin to create space between the icon and text
-//             />
-//           </Grid>
-//         </Grid>
-//       </Grid>
-//       <Grid item xs={6} className={styles.smallGraph}>
-//         <Grid item container>
-//           <Grid item xs={6}>
-//             <Typography className="heading2" style={{ fontSize: "26px" }}>
-//               Posture Analysis Results
-//             </Typography>
-//             <Typography className={styles.percentageText}>
-//               64% Success
-//             </Typography>
-//           </Grid>
-
-//           <Grid item xs={6}>
-//             <img
-//               src={eye}
-//               alt="Analysis Icon"
-//               style={{ cursor: "pointer" }} // Add margin to create space between the icon and text
-//             />
-//           </Grid>
-//         </Grid>
-//       </Grid>
-//     </Grid>
-//   </Grid>
-// </Grid>
