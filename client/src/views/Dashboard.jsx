@@ -6,6 +6,7 @@ import {
   FormHelperText,
   Grid,
   InputLabel,
+  Link,
   MenuItem,
   Select,
   TextField,
@@ -48,6 +49,7 @@ import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import LastPageIcon from "@material-ui/icons/LastPage";
 import PropTypes from "prop-types";
 import { PopupContext } from "../App";
+import Popup from "../helper/Popup";
 
 function Stream(props) {
   const uniqueId = uuidv4();
@@ -86,7 +88,7 @@ export default function Dashboard() {
   const [historySeries, setHistorySeries] = React.useState([]);
   const [historyDates, setHistoryDates] = React.useState([]);
   const [averagePosture, setAveragePosture] = React.useState(0);
-
+  const [isPopupOpen, setIsPopupOpen] = React.useState(false);
   const [notificationTimerDetails, setNotificationTimerDetails] =
     React.useState({
       time: "",
@@ -188,6 +190,7 @@ export default function Dashboard() {
     setStreamStarted(true);
   };
   const onStreamPause = (uniqueId) => {
+    setIsPopupOpen(true);
     const stop = "stop";
     const pauseStream = `${apiList.stream}/${uniqueId}/${stop}`;
     axios
@@ -220,6 +223,7 @@ export default function Dashboard() {
 
   const handleNotificationTimer = (event) => {
     event.preventDefault(); // Prevent page refresh
+    setIsPopupOpen(true);
     const selectedUnit = notificationTimerDetails.unit;
     let finalDuration = 0;
     if (selectedUnit.match("minute")) {
@@ -230,11 +234,11 @@ export default function Dashboard() {
       finalDuration = notificationTimerDetails.time;
     }
     console.log("Notifiaction timeer details", finalDuration);
-    setPopup({
-      open: true,
-      severity: "error",
-      message: "You are sitting inappropriately since 10 minutes!",
-    });
+    // setPopup({
+    //   open: true,
+    //   severity: "error",
+    //   message: "You are sitting inappropriately since 10 minutes!",
+    // });
     setNotificationTimerDetails({ time: "", unit: "" });
   };
 
@@ -243,6 +247,15 @@ export default function Dashboard() {
       ...prevState,
       [key]: value,
     }));
+  };
+
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+    setPopup({
+      open: true,
+      severity: "success",
+      message: "Your feedback saved!",
+    });
   };
 
   return (
@@ -262,10 +275,9 @@ export default function Dashboard() {
             <img src={dashbaord} alt="" />
             <h3>Dashboard</h3>
           </span>
-          {/* <span>
-            <img src={dashbaord} alt="" />
-            <h3>Dashboard</h3>
-          </span> */}
+        </div>
+        <div className="logout-link">
+          <Link href="/login">Logout</Link>
         </div>
       </div>
       <div className="main-content">
@@ -345,6 +357,7 @@ export default function Dashboard() {
                   </>
                 )}
               </div>
+              <Popup open={isPopupOpen} onClose={handleClosePopup} />
               <div className="stats-section-left">
                 <div className="analysis-details">
                   <h1>Posture Analysis Results</h1>
