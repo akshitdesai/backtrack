@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { Avatar, Menu, MenuItem } from "@material-ui/core";
 import axios from "axios";
 import { PopupContext } from "../App";
+import apiList from "../helper/Apis";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -80,8 +81,7 @@ function NavBar() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  const getData = () => {
+   const getData = () => {
     // axios
     //   .get(apiList.user, {
     //     headers: {
@@ -99,7 +99,7 @@ function NavBar() {
     //       message: "Error",
     //     });
     //   });
-  };
+   };
 
   return (
     <div className={styles.body}>
@@ -124,21 +124,21 @@ function NavBar() {
           </Typography>
           <>
             <Button
-              onClick={() => handleClick("/userapplications")}
+              onClick={() => handleClick("")}
               className={styles.button}
             >
               <Typography>Features</Typography>
             </Button>
 
             <Button
-              onClick={() => handleClick("/userapplications")}
+              onClick={() => handleClick("")}
               className={styles.button}
             >
               <Typography>Get Started</Typography>
             </Button>
 
             <Button
-              onClick={() => handleClick("/userapplications")}
+              onClick={() => handleClick("")}
               className={styles.button}
             >
               <Typography>FAQ</Typography>
@@ -191,14 +191,14 @@ function NavBar() {
               </Menu>
             </div> */}
           </>
-          <IconButton
+          {/* <IconButton
             aria-label="Language"
             aria-controls="menu-appbar"
             aria-haspopup="true"
             className={styles.button}
           >
             <TranslateIcon />
-          </IconButton>
+          </IconButton> */}
         </Toolbar>
       </AppBar>
     </div>

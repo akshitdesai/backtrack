@@ -9,6 +9,8 @@ import SignUpPage from "./views/Signup";
 import Footer from "./views/Footer";
 import MessagePopupBox from "./helper/MessagePopupBox";
 import HomePage from "./views/Home";
+import Charts from "./views/Charts";
+import Dashboard from "./views/Dashboard.jsx";
 
 // function App() {
 //   return (
@@ -47,10 +49,12 @@ function App() {
         <Grid container direction="column">
           <Grid item>
             <Routes>
-              <Route path="/" element={<LoginPage />} />
+              <Route path="/" element={<SignUpPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignUpPage />} />
               <Route path="/home" element={<HomePage />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/charts" element={<Charts />} />
             </Routes>
           </Grid>
           {/* <Grid item>
