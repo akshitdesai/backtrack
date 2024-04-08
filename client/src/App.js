@@ -11,7 +11,8 @@ import MessagePopupBox from "./helper/MessagePopupBox";
 import HomePage from "./views/Home";
 import Charts from "./views/Charts";
 import Dashboard from "./views/Dashboard.jsx";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // function App() {
 //   return (
 //     <div className="App">
@@ -72,6 +73,11 @@ function App() {
         }
         severity={popup.severity}
         message={popup.message}
+      />
+
+      <ToastContainer
+          position="top-center"
+          theme="colored"
       />
     </BrowserRouter>
   );

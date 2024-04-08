@@ -26,6 +26,7 @@ yarn-error.log*
 */.venv/
 .idea/
 
+__pycache__
 *.pyc
 */migrations/
 

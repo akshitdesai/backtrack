@@ -37,15 +37,16 @@ const Popup = ({ open, onClose }) => {
       aria-describedby="alert-dialog-description"
       PaperProps={{
         style: {
-          minHeight: "35%",
-          maxHeight: "35%",
-          minWidth: "30%",
+          minHeight: "20%",
+          maxHeight: "20%",
+          minWidth: "25%",
           borderRadius: "10px",
         },
       }}
     >
       <DialogTitle id="alert-dialog-title">{"Feedback"}</DialogTitle>
-      <DialogContent>
+      <DialogContent className="feedback-content"
+      >
         <DialogContentText id="alert-dialog-description">
           How was your experience?
         </DialogContentText>
@@ -58,13 +59,16 @@ const Popup = ({ open, onClose }) => {
           onChange={handleFeedbackChange}
           fullWidth
         />
+        {/*<Button className="feedback-submit" onClick={handleSubmit} variant="outlined">*/}
+        {/*  Submit*/}
+        {/*</Button>*/}
       </DialogContent>
       <DialogActions className="popup-actions">
         <Button onClick={handleSubmit} variant="outlined">
           Submit
         </Button>
-        <ThumbUpAltIcon style={{ cursor: "pointer" }} onClick={onClose} />
-        <ThumbDownIcon style={{ cursor: "pointer" }} onClick={onClose} />
+        {/*<ThumbUpAltIcon style={{ cursor: "pointer" }} onClick={onClose} />*/}
+        {/*<ThumbDownIcon style={{ cursor: "pointer" }} onClick={onClose} />*/}
       </DialogActions>
     </Dialog>
   );

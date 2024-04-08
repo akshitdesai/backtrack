@@ -32,7 +32,7 @@ class AuthService:
                 access_token = create_access_token(identity=user.id)
 
                 resp = message(True, "Successfully logged in.")
-                resp["access_token"] = access_token
+                resp["access_token"] = access_token.decode('utf-8')
                 resp["user"] = user_info
 
                 return resp, 200
@@ -87,7 +87,7 @@ class AuthService:
             access_token = create_access_token(identity=new_user.id)
 
             resp = message(True, "User has been registered.")
-            resp["access_token"] = access_token
+            resp["access_token"] = access_token.decode('utf-8')
             resp["user"] = user_info
 
             return resp, 201

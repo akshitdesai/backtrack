@@ -1,6 +1,5 @@
 from flask import current_app
-from sqlalchemy import func,extract
-
+from sqlalchemy import func, extract
 
 from app.utils import err_resp, message, internal_err_resp
 from app.models.stream import Stream
@@ -9,6 +8,7 @@ from app import db
 from datetime import datetime, timedelta
 # from app.utils import message, err_resp, internal_err_resp
 from .utils import load_data
+
 
 class StreamService:
     @staticmethod

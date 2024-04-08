@@ -26,6 +26,9 @@ pyenv exec python -m venv .venv
 source .venv/bin/activate
 .venv\Scripts\activate   // For Windows User
 pip install -r requirements.txt
+pip install "PyJWT==1.7.1"
+pip install greenlet
+pip install "mediapipe== 0.10.9"
 
 # To run the server
 flask run -p 8000 --debugger

@@ -156,6 +156,8 @@ function SignupPage(props) {
         .post(apiList.signup, signupDetails)
         .then((response) => {
           localStorage.setItem("token", response.data.access_token);
+          localStorage.setItem("username",response.data.user.username
+          );
           console.log("Token", getToken);
           navigate("/dashboard");
 

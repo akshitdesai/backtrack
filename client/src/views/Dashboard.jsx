@@ -39,7 +39,6 @@ import dayjs from "dayjs";
 import moment from "moment";
 import { initializeApp } from "firebase/app";
 import { getMessaging } from "firebase/messaging/sw";
-import { getToken } from "firebase/messaging";
 import TableFooter from "@mui/material/TableFooter";
 import TablePagination from "@mui/material/TablePagination";
 import IconButton from "@mui/material/IconButton";
@@ -50,11 +49,22 @@ import LastPageIcon from "@material-ui/icons/LastPage";
 import PropTypes from "prop-types";
 import { PopupContext } from "../App";
 import Popup from "../helper/Popup";
+import io from 'socket.io-client';
 
-function Stream(props) {
+import {  toast } from 'react-toastify';
+import {useState} from "react";
+
+import getToken, { getUsername} from "../helper/Auth";
+import {Navigate} from "react-router-dom";
+
+
+
+
+const Stream = React.memo((props)=> {
   const uniqueId = uuidv4();
   const streamSource = `${apiList.stream}/${uniqueId}`;
 
+  console.log("Stream called !!!!!")
   return (
     <div className="stream-monitoring" style={{ position: "relative" }}>
       <img src={streamSource} className="App-logo" alt="logo" />
@@ -80,7 +90,8 @@ function Stream(props) {
       </button>
     </div>
   );
-}
+})
+
 export default function Dashboard() {
   // const styles = useStyles();
   const [streamStarted, setStreamStarted] = React.useState(false);
@@ -91,66 +102,68 @@ export default function Dashboard() {
   const [isPopupOpen, setIsPopupOpen] = React.useState(false);
   const [notificationTimerDetails, setNotificationTimerDetails] =
     React.useState({
-      time: "",
-      unit: "",
+      time: 10,
+      unit: "second",
     });
   const setPopup = React.useContext(PopupContext);
+  const [isLoggedIn, setIsLoggedIn] = useState(getToken);
+
 
   React.useEffect(() => {
     getSessionHistory();
-    initializeFirebase();
+    initializeWebSocket();
   }, []);
-  const initializeFirebase = () => {
-    const firebaseConfig = {
-      // Your Firebase configuration
-      apiKey: "AIzaSyCHCMf9Uy2t9F5XFIcSErdiVpgaKt9U3tI",
-      authDomain: "backtrack-8231c.firebaseapp.com",
-      projectId: "backtrack-8231c",
-      storageBucket: "backtrack-8231c.appspot.com",
-      messagingSenderId: "261927245122",
-      appId: "1:261927245122:web:06664f285faf4b82e524db",
-      measurementId: "G-N5Y7J4ESNL",
-    };
+  const icon = "https://via.placeholder.com/50x50";
+  const song = "error-126627.mp3";
+  const title = "Please Sit Properly !!!";
+  function notifyMe(message) {
+    if (!("Notification" in window)) {
+      // Check if the browser supports notifications
+      console.log("This browser does not support desktop notification");
+      alert("This browser does not support desktop notification");
+    } else if (Notification.permission === "granted") {
+      // Check whether notification permissions have already been granted;
+      // if so, create a notification
+      const notification =new Notification(title, { body: message, icon });
+      new Audio(song).play();
+      console.log("Notification sent!");
+      // …
+    } else if (Notification.permission !== "denied") {
+      // We need to ask the user for permission
+      Notification.requestPermission().then((permission) => {
+        // If the user accepts, let's create a notification
+        if (permission === "granted") {
+          const notification =new Notification(title, { body: message, icon });
+          new Audio(song).play();
 
-    const app = initializeApp(firebaseConfig);
+          // …
+        }
+      });
+    }
+  }
+  // function callNotify(title, msg, icone) {
+  //   new Notification(title, { body: msg, icon: icone });
+  //   new Audio(song).play();
+  // }
 
-    const messaging = getMessaging(app);
+  const initializeWebSocket = () => {
+    const socket = io("http://127.0.0.1:8000/");
 
-    console.log("Requesting permission...");
-    Notification.requestPermission().then((permission) => {
-      if (permission === "granted") {
-        console.log("Notification permission granted.");
-      }
+    socket.on('connect', () => {
+      console.log('Connected to WebSocket server');
     });
 
-    getToken(messaging, {
-      vapidKey:
-        "BE7yOAmKFq4OxtJ-9LkHo11j7JyVfeH9ts8dNu4YZ9PphOOgzQ7aT3UUvniF0VQHzLi_CI8rOgeAoaRI8_yHQNA",
-    })
-      .then((currentToken) => {
-        if (currentToken) {
-          console.log("token ", currentToken);
-          axios
-            .get(`${apiList.registerToken}/${currentToken}`)
-            .then((response) => {
-              console.log("Token - > ", response);
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        } else {
-          // Show permission request UI
-          console.log(
-            "No registration token available. Request permission to generate one."
-          );
-          // ...
-        }
-      })
-      .catch((err) => {
-        console.log("An error occurred while retrieving token. ", err);
-        // ...
-      });
-  };
+    socket.on('notification', (message) => {
+      toast.error(message);
+      notifyMe(message);
+
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }
+
   const getSessionHistory = () => {
     const getSessionHistory = `${apiList.history}`;
     axios
@@ -186,9 +199,12 @@ export default function Dashboard() {
         console.log(err);
       });
   };
-  const getStarted = () => {
-    setStreamStarted(true);
-  };
+
+
+
+  const getStarted = () =>{
+    setStreamStarted(true)
+  }
   const onStreamPause = (uniqueId) => {
     setIsPopupOpen(true);
     const stop = "stop";
@@ -223,7 +239,9 @@ export default function Dashboard() {
 
   const handleNotificationTimer = (event) => {
     event.preventDefault(); // Prevent page refresh
+
     setIsPopupOpen(true);
+    return;
     const selectedUnit = notificationTimerDetails.unit;
     let finalDuration = 0;
     if (selectedUnit.match("minute")) {
@@ -234,12 +252,38 @@ export default function Dashboard() {
       finalDuration = notificationTimerDetails.time;
     }
     console.log("Notifiaction timeer details", finalDuration);
+    if(finalDuration<10){
+      setPopup({
+        open: true,
+        severity: "warning",
+        message: "Please select minimum 10 seconds for notification ",
+      });
+    }
+    else{
+
+
+      const setThreshold = `${apiList.threshold}/${finalDuration}`;
+      axios
+          .get(setThreshold)
+          .then((response) => {
+           console.log("Response --- > ",response)
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      setPopup({
+        open: true,
+        severity: "success",
+        message: "Notification Timer Successfully Set",
+      });
+      // setNotificationTimerDetails({ time: "", unit: "" });
+
+    }
     // setPopup({
     //   open: true,
     //   severity: "error",
     //   message: "You are sitting inappropriately since 10 minutes!",
     // });
-    setNotificationTimerDetails({ time: "", unit: "" });
   };
 
   const handleInput = (key, value) => {
@@ -258,7 +302,12 @@ export default function Dashboard() {
     });
   };
 
-  return (
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+  }
+
+  return isLoggedIn ?  (
     <div className="container">
       <div className="side-panel">
         <h1>BackTrack</h1>
@@ -267,7 +316,7 @@ export default function Dashboard() {
             alt="User"
             style={{ objectFit: "fill", height: "60px", width: "60px" }}
           />
-          <h2>Umang Patel</h2>
+          <h2>{getUsername() ? getUsername() : "Umang"}</h2>
         </div>
 
         <div className="links">
@@ -277,7 +326,7 @@ export default function Dashboard() {
           </span>
         </div>
         <div className="logout-link">
-          <Link href="/login">Logout</Link>
+          <Link href="/login" onClick={handleLogout}>Logout</Link>
         </div>
       </div>
       <div className="main-content">
@@ -286,11 +335,12 @@ export default function Dashboard() {
             <div className="greetings-section">
               <div className="greetings-content">
                 <div>
-                  <h1>GOOD MORNING UMANG!</h1>
+                  <h1>Hello {getUsername() ? getUsername(): "Umang"}!</h1>
                   <p>Start Your Journey to Optimize Your Posture with us.</p>
+
                 </div>
                 <div>
-                  <p style={{ color: "#352DFF", marginBottom: "1em" }}>
+                  <p style={{color: "#352DFF", marginBottom: "1em"}}>
                     Adjust Notification Time
                   </p>
                   <form onSubmit={handleNotificationTimer}>
@@ -373,7 +423,7 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="main-content-upper-right">
-            <BasicDateCalendar onDateChage={getSessionByDate} />
+            <BasicDateCalendar onDateChage={getSessionByDate}  className = "calender"/>
           </div>
         </div>
         <div className="main-content-lower">
@@ -393,7 +443,9 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
-  );
+  ):(
+      <Navigate to="/login" />
+  )
 }
 
 function BasicDateCalendar(props) {
@@ -413,7 +465,7 @@ function BasicDateCalendar(props) {
   );
 }
 
-const sessionData = [
+const sessionData1 = [
   { start_time: "10 Mar 2024", duration: 25, good_posture: 65 },
   { start_time: "11 Mar 2024", duration: 30, good_posture: 70 },
   { start_time: "12 Mar 2024", duration: 20, good_posture: 60 },
@@ -500,7 +552,7 @@ TablePaginationActions.propTypes = {
   rowsPerPage: PropTypes.number.isRequired,
 };
 function BasicTable(props) {
-  const sessionData1 = props.sessionData;
+  const sessionData = props.sessionData;
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 

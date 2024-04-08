@@ -5,7 +5,10 @@ const apiList = {
   stream: `${baseURL}/api/stream`,
   session:`${baseURL}/api/stream/date`,
   history:`${baseURL}/api/stream/history`,
-  registerToken:`${baseURL}/api/stream/registerToken`
+  registerToken:`${baseURL}/api/stream/registerToken`,
+  threshold:`${baseURL}/api/stream/threshold`,
+
+
 };
 
 export default apiList;

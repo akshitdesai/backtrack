@@ -7,8 +7,11 @@ from .service import StreamService
 from .dto import StreamDto
 from datetime import datetime
 
+from ... import socketio
+
 api = StreamDto.api
 data_resp = StreamDto.data_resp
+threshold_resp = StreamDto.threshold_resp
 
 # Stream related info
 import cv2
@@ -21,14 +24,6 @@ import mediapipe as mp
 # Initialize mediapipe selfie segmentation class.
 mp_pose = mp.solutions.pose
 mp_holistic = mp.solutions.holistic
-
-# Firebase Notification related info
-import firebase_admin
-from firebase_admin import credentials, messaging
-
-# Initialize Firebase Admin SDK
-cred = credentials.Certificate("app/api/stream/firebase-admin-token.json")  # Path to the JSON file obtained in step 3
-firebase_admin.initialize_app(cred)
 
 
 def findDistance(x1, y1, x2, y2):
@@ -67,6 +62,7 @@ good_frames_g = 0
 bad_frames_g = 0
 cap = None
 token = ""
+timeThreshold = 10
 
 
 def generate():
@@ -214,9 +210,10 @@ def generate():
                 cv2.putText(image, time_string_bad, (10, h - 20), font, 0.9, red, 2)
 
             # If you stay in bad posture for more than 3 minutes (180s) send an alert.
-            if bad_time > 60 * 3:
-                send_notification(bad_time // 60)
-                pass
+            if bad_time > timeThreshold:
+                send_notification()
+                good_frames = 0
+                bad_frames = 0
 
             # encode the frame in JPEG format
             (flag, encodedImage) = cv2.imencode(".jpg", image)
@@ -298,21 +295,52 @@ class RegisterToken(Resource):
         return {"status": "success"}
 
 
-def send_notification(time_duration_in_min):
-    global token
+@socketio.on('notification')
+def send_notification():
+    time = ""
+    if timeThreshold // 3600:
+        time += f"{timeThreshold // 3600} hours"
+    elif timeThreshold // 60:
+        time += f"{timeThreshold // 60} minutes"
+    else:
+        time += f"{timeThreshold} seconds"
 
-    if len(token) == 0:
-        return
+    message = f"You're sitting inappropriately for last {time}."
 
-    # Create a message
-    message = messaging.Message(
-        notification=messaging.Notification(
-            title="Correct your posture",
-            body=f"You're sitting bad posture for last {time_duration_in_min} minutes.",
-        ),
-        token=token,
+    socketio.emit('notification', message)
+
+    print(" ======== Successfully sent message:", message)
+
+
+@api.route("/threshold/<int:threshold>")
+class SetThreshold(Resource):
+    @api.doc(
+        "set the threshold value for the notifying of bad posture",
+        responses={
+            201: "Threshold value set successfully",
+        },
     )
+    def get(self, threshold):
+        if threshold < 10:
+            return "Minimum 10 second threshold is required", 400
 
-    # Send a message to the device corresponding to the provided registration token
-    response = messaging.send(message)
-    print("Successfully sent message:", response)
+        global timeThreshold
+
+        timeThreshold = threshold
+
+        return "Threshold value set successfully", 201
+
+
+@api.route("/threshold")
+class GetThreshold(Resource):
+    @api.doc(
+        "get the threshold value for the notifying of bad posture",
+        responses={
+            200: ("Threshold time successfully sent", threshold_resp),
+        },
+    )
+    def get(self):
+        """ Get a specific user's data by their username """
+        resp = dict()
+        resp["threshold"] = timeThreshold
+        return resp, 200

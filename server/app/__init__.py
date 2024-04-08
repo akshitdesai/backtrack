@@ -7,12 +7,15 @@ This module:
 """
 
 from flask import Flask
+from flask_socketio import SocketIO
 
 # Import extensions
 from .extensions import bcrypt, cors, db, jwt, ma
 
 # Import config
 from config import config_by_name
+
+socketio = SocketIO()
 
 def create_app(config_name):
     app = Flask(__name__)
@@ -28,6 +31,8 @@ def create_app(config_name):
     from .api import api_bp
 
     app.register_blueprint(api_bp, url_prefix="/api")
+
+    socketio.init_app(app, cors_allowed_origins="*")
 
     return app
 

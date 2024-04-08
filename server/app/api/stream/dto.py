@@ -23,3 +23,10 @@ class StreamDto:
             "user": fields.Nested(stream),
         },
     )
+
+    threshold_resp = api.model(
+        "Threshold response",
+        {
+            "threshold": fields.Integer,
+        }
+    )

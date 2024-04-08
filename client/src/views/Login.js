@@ -114,6 +114,8 @@ function LoginPage() {
         .post(apiList.login, loginDetails)
         .then((response) => {
           localStorage.setItem("token", response.data.access_token);
+          localStorage.setItem("username",response.data.user.username
+          );
           setIsLoggedIn(getToken);
           setPopup({
             open: true,
@@ -140,20 +142,20 @@ function LoginPage() {
   };
 
   return isLoggedIn ? (
-    <Navigate to="/home" />
+    <Navigate to="/dashboard" />
   ) : (
     <Grid container style={{ marginTop: "5%" }}>
-      <Grid item sm={12} md={6}>
-        <div className={styles.body}>
-          <img
-            src={HomeImage}
-            width={500}
-            height={500}
-            style={{ borderRadius: "50%" }}
-          />
-        </div>
-      </Grid>
-      <Grid item sm={12} md={6}>
+      {/*<Grid item sm={12} md={6}>*/}
+      {/*  <div className={styles.body}>*/}
+      {/*    <img*/}
+      {/*      src={HomeImage}*/}
+      {/*      width={500}*/}
+      {/*      height={500}*/}
+      {/*      style={{ borderRadius: "50%" }}*/}
+      {/*    />*/}
+      {/*  </div>*/}
+      {/*</Grid>*/}
+      <Grid item sm={12} md={12}>
         <div className={styles.body} style={{ height: "100%" }}>
           <div className={styles.body}>
             <Avatar sx={{ bgcolor: "secondary.main" }}>
