@@ -240,8 +240,6 @@ export default function Dashboard() {
   const handleNotificationTimer = (event) => {
     event.preventDefault(); // Prevent page refresh
 
-    setIsPopupOpen(true);
-    return;
     const selectedUnit = notificationTimerDetails.unit;
     let finalDuration = 0;
     if (selectedUnit.match("minute")) {
