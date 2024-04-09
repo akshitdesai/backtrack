@@ -12,21 +12,17 @@ import {
   Link,
 } from "@material-ui/core";
 import { Navigate, useNavigate } from "react-router-dom";
-import DescriptionIcon from "@material-ui/icons/Description";
-import FaceIcon from "@material-ui/icons/Face";
 // import PhoneInput from "react-phone-input-2";
 import { PopupContext } from "../App";
 import PasswordInput from "./PasswordInput";
 
-import HomeImage from "../assets/images/home.jpg";
 import SignupImage from "../assets/images/signup.svg";
-import FileInput from "../helper/FileInput";
 
 import "react-phone-number-input/style.css";
-import PhoneInput from "react-phone-number-input";
 import apiList from "../helper/Apis";
 import axios from "axios";
 import getToken from "../helper/Auth";
+import "../css/dashboard.css";
 const useStyles = makeStyles((theme) => ({
   body: {
     padding: "30px 30px",
@@ -156,8 +152,7 @@ function SignupPage(props) {
         .post(apiList.signup, signupDetails)
         .then((response) => {
           localStorage.setItem("token", response.data.access_token);
-          localStorage.setItem("username",response.data.user.username
-          );
+          localStorage.setItem("username", response.data.user.username);
           console.log("Token", getToken);
           navigate("/dashboard");
 
@@ -191,8 +186,7 @@ function SignupPage(props) {
   return isLoggedIn ? (
     <Navigate to="/" />
   ) : (
-    // <Paper elevation={3} className={styles.body}>
-    <Grid container spacing={3}>
+    <Grid container spacing={3} className="signup-container">
       <Grid item xs={5} sm={12} md={6}>
         <div className={styles.body}>
           <img src={SignupImage} width={600} height={600} />
@@ -200,7 +194,6 @@ function SignupPage(props) {
       </Grid>
       <Grid item xs={7} sm={12} md={6} spacing={4} className={styles.body}>
         <div className={`${styles.body} Title`}>
-          {/* <Typography className="Title"> */}
           <span style={{ color: "#352DFF" }}>Sign Up </span> & Improve Your
           Posture
           {/* </Typography> */}

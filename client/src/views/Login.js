@@ -52,7 +52,7 @@ function LoginPage() {
     setPassword(event.target.value);
   };
 
-    const [isLoggedIn, setIsLoggedIn] = useState(getToken);
+  const [isLoggedIn, setIsLoggedIn] = useState(getToken);
   const [inputError, setInputError] = useState({
     username: {
       error: false,
@@ -114,8 +114,7 @@ function LoginPage() {
         .post(apiList.login, loginDetails)
         .then((response) => {
           localStorage.setItem("token", response.data.access_token);
-          localStorage.setItem("username",response.data.user.username
-          );
+          localStorage.setItem("username", response.data.user.username);
           setIsLoggedIn(getToken);
           setPopup({
             open: true,
@@ -144,20 +143,10 @@ function LoginPage() {
   return isLoggedIn ? (
     <Navigate to="/dashboard" />
   ) : (
-    <Grid container style={{ marginTop: "5%" }}>
-      {/*<Grid item sm={12} md={6}>*/}
-      {/*  <div className={styles.body}>*/}
-      {/*    <img*/}
-      {/*      src={HomeImage}*/}
-      {/*      width={500}*/}
-      {/*      height={500}*/}
-      {/*      style={{ borderRadius: "50%" }}*/}
-      {/*    />*/}
-      {/*  </div>*/}
-      {/*</Grid>*/}
+    <Grid container className="login-container">
       <Grid item sm={12} md={12}>
         <div className={styles.body} style={{ height: "100%" }}>
-          <div className={styles.body}>
+          {/* <div className={styles.body}>
             <Avatar sx={{ bgcolor: "secondary.main" }}>
               <LockOutlinedIcon />
             </Avatar>
@@ -168,6 +157,11 @@ function LoginPage() {
             >
               Sign in
             </Typography>
+          </div> */}
+          <div className="Title">
+            <span style={{ color: "#352DFF" }}>Log In </span> to your BackTrack
+            Account
+            {/* </Typography> */}
           </div>
           <form onSubmit={handleSubmit}>
             <TextField
@@ -210,10 +204,10 @@ function LoginPage() {
               />
             </Grid>
             <Button
-              type="submit"
               variant="contained"
-              style={{ fontWeight: "700", bgcolor: "#b2b2b2" }}
               fullWidth
+              color="primary"
+              style={{ background: "#352DFF" }}
             >
               Login
             </Button>
@@ -221,15 +215,16 @@ function LoginPage() {
             <div
               style={{
                 display: "flex",
-                justifyContent: "space-between",
+                justifyContent: "end",
                 marginTop: "10px",
+                fontSize: "12px",
+                fontWeight: "500",
               }}
             >
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-              <Link href="/signup" variant="body2">
-                Don't have an account? Sign Up
+              <span> Don’t have an account? </span>
+
+              <Link href="/signup" style={{ color: "#4942FF" }}>
+                Sign Up
               </Link>
             </div>
           </form>
