@@ -57,7 +57,6 @@
 /*  width: 30%;*/
 /*}*/
 
-
 .greetings-section {
   background-color: white;
   width: 100%;
@@ -159,7 +158,6 @@
   display: flex;
   align-items: center;
   width: 30%;
-
 }
 
 .main-content-lower {
@@ -234,10 +232,10 @@ App {
 }
 .popup-actions {
   margin-bottom: 3%;
-  justify-content: center!important;
+  justify-content: center !important;
 }
-.feedback-content{
-  flex: none!important;
+.feedback-content {
+  flex: none !important;
 }
 
 .logout-link {
@@ -247,10 +245,20 @@ App {
   font-weight: 500;
 }
 
-.feedback-submit{
+.feedback-submit {
   flex: 0 0 auto;
   display: flex;
   padding: 8px;
   align-items: center;
   justify-content: flex-end;
+}
+
+.signup-container {
+  width: 100% !important;
+  font-family: "Inter" !important;
+}
+
+.login-container {
+  font-family: "Inter" !important;
+  margin-top: 10%;
 }
