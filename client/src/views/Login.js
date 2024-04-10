@@ -208,6 +208,7 @@ function LoginPage() {
               fullWidth
               color="primary"
               style={{ background: "#352DFF" }}
+              type="submit"
             >
               Login
             </Button>
